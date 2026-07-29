@@ -1,0 +1,114 @@
+from database.conexion import Conexion
+from models.empleado import Empleado
+
+
+class EmpleadoDAO:
+
+    def obtener(self):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        cursor.execute('SELECT * FROM "Empleados"')
+        registros = cursor.fetchall()
+
+        empleados = []
+
+        for registro in registros:
+            empleado = Empleado(
+                id=registro[0],
+                nombre=registro[1],
+                apellidos=registro[2],
+                telefono=registro[3],
+                correo=registro[4],
+                usuario=registro[5],
+                contrasena=registro[6],
+                puesto=registro[7]
+            )
+
+            empleados.append(empleado)
+
+        cursor.close()
+        conexion.close()
+
+        return empleados
+
+    def insert(self, empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            INSERT INTO "Empleados"
+            (id, nombre, apellidos, telefono, correo, usuario, contrasena, puesto)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+
+        cursor.execute(sql, (
+            empleado.id,
+            empleado.nombre,
+            empleado.apellidos,
+            empleado.telefono,
+            empleado.correo,
+            empleado.usuario,
+            empleado.contrasena,
+            empleado.puesto
+        ))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+    def update(self, empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            UPDATE "Empleados"
+            SET nombre = %s,
+                apellidos = %s,
+                telefono = %s,
+                correo = %s,
+                usuario = %s,
+                contrasena = %s,
+                puesto = %s
+            WHERE id = %s
+        """
+
+        cursor.execute(sql, (
+            empleado.nombre,
+            empleado.apellidos,
+            empleado.telefono,
+            empleado.correo,
+            empleado.usuario,
+            empleado.contrasena,
+            empleado.puesto,
+            empleado.id
+        ))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+    def delete(self, id):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        cursor.execute('DELETE FROM "Empleados" WHERE id = %s', (id,))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+    def obtener_ultimo_id(self):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        cursor.execute('SELECT MAX(id) FROM "Empleados"')
+        resultado = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        if resultado[0] is None:
+            return 0
+
+        return resultado[0]
