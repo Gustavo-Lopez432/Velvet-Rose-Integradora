@@ -32,11 +32,16 @@ def dashboard(page: ft.Page):
         padding=20,
         content=ft.Row(
             controls=[
-                ft.Text(""),
+                ft.Image(
+                    src="assets/Logo.png",
+                    width=200,
+                    height=150,
+                ),
                 ft.Text(
                     "Velvet Rose",
                     size=30,
-                    color="#FFFFFF"
+                    color="#FFFFFF",
+                    weight=ft.FontWeight.BOLD,
                 ),
                 ft.ElevatedButton(
                     content=ft.Row(
@@ -94,7 +99,7 @@ def dashboard(page: ft.Page):
                 ),
                 
                 ft.ElevatedButton(
-                    "Usuarios",
+                    "Empleados",
                     bgcolor="#EF82A2",
                     color="#000000",
                     width=180,
@@ -111,7 +116,7 @@ def dashboard(page: ft.Page):
                 ),
 
                 ft.ElevatedButton(
-                    "Productos",
+                    "Corte de caja",
                     bgcolor="#EF82A2",
                     color="#000000",
                     width=180,
@@ -119,7 +124,7 @@ def dashboard(page: ft.Page):
                 ),
                                 
                 ft.ElevatedButton(
-                    "Usuarios",
+                    "Reportes",
                     bgcolor="#EF82A2",
                     color="#000000",
                     width=180,
@@ -136,7 +141,7 @@ def dashboard(page: ft.Page):
             controls = [
                 ft.Container(
                     bgcolor="#D8A7B1", 
-                    height=140, 
+                    height=200, 
                     expand=True, 
                     blur = 10,
                     border=ft.Border.all(2, "#5A1026"),
@@ -153,7 +158,7 @@ def dashboard(page: ft.Page):
 
                 ft.Container(
                     bgcolor="#D8A7B1", 
-                    height=140, 
+                    height=200, 
                     expand=True, 
                     blur = 10,
                     border=ft.Border.all(2, "#5A1026"),
@@ -170,7 +175,7 @@ def dashboard(page: ft.Page):
 
                 ft.Container(
                     bgcolor="#D8A7B1", 
-                    height=140, 
+                    height=200, 
                     expand=True,
                     blur = 10,
                     border=ft.Border.all(2, "#5A1026"),
@@ -187,7 +192,7 @@ def dashboard(page: ft.Page):
 
                 ft.Container(
                     bgcolor="#D8A7B1", 
-                    height=140, 
+                    height=200, 
                     expand=True, 
                     blur = 10,
                     border=ft.Border.all(2, "#5A1026"),
@@ -212,8 +217,48 @@ def dashboard(page: ft.Page):
         content=ft.Row(
             controls=[
                 ft.Container(
-                    bgcolor = "#fff000"
-                )
+                    height=350,
+                    expand=8,
+                    blur=10,
+                    border=ft.Border.all(2, "#5A1026"),
+                    content=ft.Text(
+                        "Productos mas vendidos", 
+                        color="#5A1026", 
+                        weight=ft.FontWeight.BOLD, 
+                        margin=10
+                    ),
+                ),
+
+                ft.Container(
+                    height=350,
+                    expand=4,
+                    border=ft.Border.all(2, "#5A1026"),
+                    content=ft.Row(
+                        controls=[
+                            ft.Text(
+                                "Resumen de ventas",
+                                color="#5A1026", 
+                                weight=ft.FontWeight.BOLD,
+                            ),
+
+                            ft.Dropdown(
+                                width=200,
+                                height=35,
+                                hint_text="Filtrar por",
+                                color="#000000",
+                                options=[
+                                    ft.dropdown.Option("Día"),
+                                    ft.dropdown.Option("Mes"),
+                                    ft.dropdown.Option("Año"),
+                                    ft.dropdown.Option("Todo el tiempo"),
+                                ],
+                            )
+                        ],
+                        align=ft.Alignment.TOP_CENTER,
+                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
+                        margin=10
+                    )
+                ),
             ]
         )
     )
