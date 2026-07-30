@@ -1,7 +1,11 @@
 import flet as ft
 from UI.dashboard import *
+from UI.ventas_window import *
+from UI.dashboard import *
+from UI.dashboard import *
+from UI.dashboard import *
 
-ft.app (target=dashboard)
+ft.app (target=ventas_window)
 
 
 
