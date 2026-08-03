@@ -8,7 +8,7 @@ class VentaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT * FROM "Ventas"')
+        cursor.execute('SELECT * FROM ventas')
         registros = cursor.fetchall()
 
         ventas = []
@@ -36,13 +36,12 @@ class VentaDAO:
         cursor = conexion.cursor()
 
         sql = """
-            INSERT INTO "Ventas"
-            (id, fecha, folio, idEmpleado, subtotal, iva, total)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO ventas
+            (fecha, folio, id_empleado, subtotal, iva, total)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
 
         cursor.execute(sql, (
-            venta.id,
             venta.fecha,
             venta.folio,
             venta.idEmpleado,
@@ -60,15 +59,23 @@ class VentaDAO:
         cursor = conexion.cursor()
 
         sql = """
-            UPDATE "Ventas"
+            UPDATE ventas
             SET fecha = %s,
-                idEmpleado = %s
+                folio = %s,
+                id_empleado = %s,
+                subtotal = %s,
+                iva = %s,
+                total = %s
             WHERE id = %s
         """
 
         cursor.execute(sql, (
             venta.fecha,
+            venta.folio,
             venta.idEmpleado,
+            venta.subtotal,
+            venta.iva,
+            venta.total,
             venta.id
         ))
 
@@ -80,7 +87,7 @@ class VentaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM "Ventas" WHERE id = %s', (id,))
+        cursor.execute('DELETE FROM ventas WHERE id = %s', (id,))
 
         conexion.commit()
         cursor.close()
@@ -90,7 +97,7 @@ class VentaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT MAX(id) FROM "Ventas"')
+        cursor.execute('SELECT MAX(id) FROM ventas')
         resultado = cursor.fetchone()
 
         cursor.close()

@@ -8,7 +8,7 @@ class ProductoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT * FROM "Productos"')
+        cursor.execute('SELECT * FROM productos')
         registros = cursor.fetchall()
 
         productos = []
@@ -41,13 +41,12 @@ class ProductoDAO:
         cursor = conexion.cursor()
 
         sql = """
-            INSERT INTO "Productos"
-            (id, codigoBarras, nombre, marca, talla, color, imagen, precio, proveedor, existencia, maxStock, minStock)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO productos
+            (codigo_barras, nombre, marca, talla, color, imagen, precio, proveedor, existencia, max_stock, min_stock)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
         cursor.execute(sql, (
-            producto.id,
             producto.codigoBarras,
             producto.nombre,
             producto.marca,
@@ -70,8 +69,8 @@ class ProductoDAO:
         cursor = conexion.cursor()
 
         sql = """
-            UPDATE "Productos"
-            SET codigoBarras = %s,
+            UPDATE productos
+            SET codigo_barras = %s,
                 nombre = %s,
                 marca = %s,
                 talla = %s,
@@ -80,8 +79,8 @@ class ProductoDAO:
                 precio = %s,
                 proveedor = %s,
                 existencia = %s,
-                maxStock = %s,
-                minStock = %s
+                max_stock = %s,
+                min_stock = %s
             WHERE id = %s
         """
 
@@ -108,7 +107,7 @@ class ProductoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM "Productos" WHERE id = %s', (id,))
+        cursor.execute('DELETE FROM productos WHERE id = %s', (id,))
 
         conexion.commit()
         cursor.close()
@@ -118,7 +117,7 @@ class ProductoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT MAX(id) FROM "Productos"')
+        cursor.execute('SELECT MAX(id) FROM productos')
         resultado = cursor.fetchone()
 
         cursor.close()

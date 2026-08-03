@@ -8,7 +8,7 @@ class DetalleVentaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT * FROM "DetalleVenta"')
+        cursor.execute('SELECT * FROM detalle_venta')
         registros = cursor.fetchall()
 
         detalles = []
@@ -35,13 +35,12 @@ class DetalleVentaDAO:
         cursor = conexion.cursor()
 
         sql = """
-            INSERT INTO "DetalleVenta"
-            (id, idVenta, idProducto, cantidad, precioUnitario, subtotal)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO detalle_venta
+            (id_venta, id_producto, cantidad, precio_unitario, subtotal)
+            VALUES (%s, %s, %s, %s, %s)
         """
 
         cursor.execute(sql, (
-            detalle.id,
             detalle.idVenta,
             detalle.idProducto,
             detalle.cantidad,
@@ -58,11 +57,11 @@ class DetalleVentaDAO:
         cursor = conexion.cursor()
 
         sql = """
-            UPDATE "DetalleVenta"
-            SET idVenta = %s,
-                idProducto = %s,
+            UPDATE detalle_venta
+            SET id_venta = %s,
+                id_producto = %s,
                 cantidad = %s,
-                precioUnitario = %s,
+                precio_unitario = %s,
                 subtotal = %s
             WHERE id = %s
         """
@@ -84,7 +83,7 @@ class DetalleVentaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM "DetalleVenta" WHERE id = %s', (id,))
+        cursor.execute('DELETE FROM detalle_venta WHERE id = %s', (id,))
 
         conexion.commit()
         cursor.close()
@@ -94,7 +93,7 @@ class DetalleVentaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT MAX(id) FROM "DetalleVenta"')
+        cursor.execute('SELECT MAX(id) FROM detalle_venta')
         resultado = cursor.fetchone()
 
         cursor.close()
