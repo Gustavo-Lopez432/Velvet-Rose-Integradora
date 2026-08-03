@@ -1,6 +1,12 @@
 import flet as ft
+from DAO.venta_dao import VentaDAO
 
 def ventas_window(page: ft.Page):
+
+    #? instacias de los objetos 
+    venta_dao = VentaDAO()
+    registros = venta_dao.cargar_datos()
+
 
     #? encabezado de la ventana
     page.title = "Ventas"
@@ -158,155 +164,34 @@ def ventas_window(page: ft.Page):
     )
 
     #?tabla de ventas
-    contenidoTabla = ft.Container(
-        ft.DataTable(
-            columns=[
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("ID", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("Fecha", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("Folio", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("ID del empleado", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("Subtotal", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("IVA", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-                ft.DataColumn(
-                    ft.Container(
-                        content=ft.Text("Total", color="#FFFFFF"),
-                        width=120,
-                        height=50,
-                        bgcolor="#C2355F",
-                        alignment=ft.Alignment.CENTER,
-                        padding=ft.Padding.all(5)
-                    )
-                ),
-            ],
-            rows=[
-                ft.DataRow(
-                    cells=[
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("1", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("28/07/2026", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("VBN323", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("1", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("30", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("16%", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                        ft.DataCell(
-                            content=ft.Container(
-                                content=ft.Text("34.8", color="#000000"),
-                                width=120,
-                                height=50,
-                                alignment=ft.Alignment.CENTER,
-                                padding=ft.Padding.all(5)
-                            )
-                        ),
-                    ]
-                )
-            ],
-            column_spacing=1,
-            horizontal_lines=None,
-            border=None
-        ),
-        alignment=ft.Alignment.CENTER
+    tabla = ft.DataTable(
+        columns=[
+            ft.DataColumn(ft.Text("ID")),
+            ft.DataColumn(ft.Text("Fecha")),
+            ft.DataColumn(ft.Text("Folio")),
+            ft.DataColumn(ft.Text("Empleado")),
+            ft.DataColumn(ft.Text("Subtotal")),
+            ft.DataColumn(ft.Text("IVA")),
+            ft.DataColumn(ft.Text("Total")),
+        ],
+
+        rows=[]
     )
+
+    for registro in registros:
+        tabla.rows.append(
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(ft.Text(str(registro[0]))),
+                    ft.DataCell(ft.Text(registro[1])),
+                    ft.DataCell(ft.Text(str(registro[2]))),
+                    ft.DataCell(ft.Text(registro[3])),
+                    ft.DataCell(ft.Text(str(registro[4]))),
+                    ft.DataCell(ft.Text(str(registro[5]))),
+                    ft.DataCell(ft.Text(str(registro[6]))),
+                ]
+            )
+        )
 
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
@@ -331,7 +216,7 @@ def ventas_window(page: ft.Page):
                     alignment=ft.MainAxisAlignment.START,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER
                 ),
-                contenidoTabla,
+                tabla,
                 botonAgregar,
             ],
             spacing=10
