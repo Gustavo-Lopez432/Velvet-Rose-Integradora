@@ -166,29 +166,31 @@ def ventas_window(page: ft.Page):
     #?tabla de ventas
     tabla = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("ID")),
-            ft.DataColumn(ft.Text("Fecha")),
-            ft.DataColumn(ft.Text("Folio")),
-            ft.DataColumn(ft.Text("Empleado")),
-            ft.DataColumn(ft.Text("Subtotal")),
-            ft.DataColumn(ft.Text("IVA")),
-            ft.DataColumn(ft.Text("Total")),
+            ft.DataColumn(ft.Text("ID", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Fecha", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Folio", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Empleado", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Subtotal", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("IVA", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Total", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
         ],
 
-        rows=[]
+        rows=[],
+        heading_row_color="#C2355F",
+        heading_row_height=50,
     )
 
     for registro in registros:
         tabla.rows.append(
             ft.DataRow(
                 cells=[
-                    ft.DataCell(ft.Text(str(registro[0]))),
-                    ft.DataCell(ft.Text(registro[1])),
-                    ft.DataCell(ft.Text(str(registro[2]))),
-                    ft.DataCell(ft.Text(registro[3])),
-                    ft.DataCell(ft.Text(str(registro[4]))),
-                    ft.DataCell(ft.Text(str(registro[5]))),
-                    ft.DataCell(ft.Text(str(registro[6]))),
+                    ft.DataCell(ft.Text(str(registro[0]), color="#000000")),
+                    ft.DataCell(ft.Text(registro[1], color="#000000")),
+                    ft.DataCell(ft.Text(str(registro[2]), color="#000000")),
+                    ft.DataCell(ft.Text(registro[3], color="#000000")),
+                    ft.DataCell(ft.Text(str(registro[4]), color="#000000")),
+                    ft.DataCell(ft.Text(str(registro[5]), color="#000000")),
+                    ft.DataCell(ft.Text(str(registro[6]), color="#000000")),
                 ]
             )
         )

@@ -1,14 +1,14 @@
 import flet as ft
-from DAO.producto_dao import ProductoDAO
+from DAO.empleado_dao import EmpleadoDAO
 
-def productos_window(page: ft.Page):
+def empleados_window(page: ft.Page):
 
-    #? instancias 
-    producto_dao = ProductoDAO()
-    registros = producto_dao.cargar_datos()
+    #? instancias
+    empleados_dao = EmpleadoDAO()
+    registros = empleados_dao.cargar_datos()
 
     #? encabezado de la ventana
-    page.title = "Productos"
+    page.title = "Usuarios"
     page.window_width = 1920
     page.window_height = 1080
     page.padding = 0
@@ -17,7 +17,7 @@ def productos_window(page: ft.Page):
     #? titulo y subtitulo del contenido principal
     titulo = ft.Container(
         content=ft.Text(
-            "Productos",
+            "Usuarios",
             size=30,
             weight=ft.FontWeight.BOLD,
             color="#5A1026",
@@ -151,21 +151,17 @@ def productos_window(page: ft.Page):
         alignment=ft.MainAxisAlignment.END
     )
 
-    #?tabla de productos
+    #?tabla de ventas
     tabla = ft.DataTable(
         columns=[
             ft.DataColumn(ft.Text("ID", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Codigo de barras", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
             ft.DataColumn(ft.Text("Nombre", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Marca", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Talla", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Color", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            # ft.DataColumn(ft.Text("Imagen", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Precio", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Proveedor", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Existencia", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Max stock", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Min stock", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Apellidos", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Telefono", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Correo", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Usuario", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Contraseña", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Rol", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
         ],
         rows=[],
         heading_row_color="#C2355F",
@@ -177,24 +173,20 @@ def productos_window(page: ft.Page):
             ft.DataRow(
                 cells=[
                     ft.DataCell(ft.Text(str(registro[0]), color="#000000")),
-                    ft.DataCell(ft.Text((registro[1]), color="#000000")),
-                    ft.DataCell(ft.Text((registro[2]), color="#000000")),
-                    ft.DataCell(ft.Text((registro[3]), color="#000000")),
-                    ft.DataCell(ft.Text((registro[4]), color="#000000")),
-                    ft.DataCell(ft.Text((registro[5]), color="#000000")),
-                    # ft.DataCell(ft.Text((registro[6]), color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[7]), color="#000000")),
-                    ft.DataCell(ft.Text((registro[8]), color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[9]), color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[10]), color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[11]), color="#000000")),
+                    ft.DataCell(ft.Text(registro[1], color="#000000")),
+                    ft.DataCell(ft.Text(registro[2], color="#000000")),
+                    ft.DataCell(ft.Text(registro[3], color="#000000")),
+                    ft.DataCell(ft.Text(registro[4], color="#000000")),
+                    ft.DataCell(ft.Text(registro[5], color="#000000")),
+                    ft.DataCell(ft.Text(registro[6], color="#000000")),
+                    ft.DataCell(ft.Text(registro[7], color="#000000")),
                 ]
             )
         )
 
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
-            "Agregar producto",
+            "Agregar usuario",
             bgcolor="#EF82A2",
             color="#000000",
         ),
@@ -242,4 +234,4 @@ def productos_window(page: ft.Page):
     
     page.add(layout)
 
-ft.app(target=productos_window)
+ft.app(target=empleados_window)
