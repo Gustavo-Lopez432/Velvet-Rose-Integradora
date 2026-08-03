@@ -8,7 +8,7 @@ class CorteCajaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT * FROM "CorteCaja"')
+        cursor.execute('SELECT * FROM corte_caja')
         registros = cursor.fetchall()
 
         cortes = []
@@ -36,13 +36,12 @@ class CorteCajaDAO:
         cursor = conexion.cursor()
 
         sql = """
-            INSERT INTO "CorteCaja"
-            (id, fecha, horaApertura, horaCierre, montoInicial, montoFinal, idEmpleado)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO corte_caja
+            (fecha, hora_apertura, hora_cierre, monto_inicial, monto_final, id_empleado)
+            VALUES (%s, %s, %s, %s, %s, %s)
         """
 
         cursor.execute(sql, (
-            corte.id,
             corte.fecha,
             corte.horaApertura,
             corte.horaCierre,
@@ -60,13 +59,13 @@ class CorteCajaDAO:
         cursor = conexion.cursor()
 
         sql = """
-            UPDATE "CorteCaja"
+            UPDATE corte_caja
             SET fecha = %s,
-                horaApertura = %s,
-                horaCierre = %s,
-                montoInicial = %s,
-                montoFinal = %s,
-                idEmpleado = %s
+                hora_apertura = %s,
+                hora_cierre = %s,
+                monto_inicial = %s,
+                monto_final = %s,
+                id_empleado = %s
             WHERE id = %s
         """
 
@@ -88,7 +87,7 @@ class CorteCajaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM "CorteCaja" WHERE id = %s', (id,))
+        cursor.execute('DELETE FROM corte_caja WHERE id = %s', (id,))
 
         conexion.commit()
         cursor.close()
@@ -98,7 +97,7 @@ class CorteCajaDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT MAX(id) FROM "CorteCaja"')
+        cursor.execute('SELECT MAX(id) FROM corte_caja')
         resultado = cursor.fetchone()
 
         cursor.close()

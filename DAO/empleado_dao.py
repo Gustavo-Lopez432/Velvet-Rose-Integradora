@@ -8,7 +8,7 @@ class EmpleadoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT * FROM "Empleados"')
+        cursor.execute('SELECT * FROM empleados')
         registros = cursor.fetchall()
 
         empleados = []
@@ -37,13 +37,12 @@ class EmpleadoDAO:
         cursor = conexion.cursor()
 
         sql = """
-            INSERT INTO "Empleados"
-            (id, nombre, apellidos, telefono, correo, usuario, contrasena, puesto)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO empleados
+            (nombre, apellidos, telefono, correo, usuario, contrasena, puesto)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
 
         cursor.execute(sql, (
-            empleado.id,
             empleado.nombre,
             empleado.apellidos,
             empleado.telefono,
@@ -62,7 +61,7 @@ class EmpleadoDAO:
         cursor = conexion.cursor()
 
         sql = """
-            UPDATE "Empleados"
+            UPDATE empleados
             SET nombre = %s,
                 apellidos = %s,
                 telefono = %s,
@@ -92,7 +91,7 @@ class EmpleadoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM "Empleados" WHERE id = %s', (id,))
+        cursor.execute('DELETE FROM empleados WHERE id = %s', (id,))
 
         conexion.commit()
         cursor.close()
@@ -102,7 +101,7 @@ class EmpleadoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('SELECT MAX(id) FROM "Empleados"')
+        cursor.execute('SELECT MAX(id) FROM empleados')
         resultado = cursor.fetchone()
 
         cursor.close()

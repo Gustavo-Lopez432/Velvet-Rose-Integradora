@@ -2,15 +2,15 @@ from database.conexion import Conexion
 
 class DashboardDAO:
 
-    #? obtener todas las ventas de hoy
+    #? Obtener todas las ventas de hoy
     def ventas_hoy(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
         sql = """
-            SELECT COALESCE(SUM(total_venta), 0)
-            FROM "Ventas"
-            WHERE DATE(fecha_venta) = CURRENT_DATE
+            SELECT COALESCE(SUM(total), 0)
+            FROM ventas
+            WHERE DATE(fecha) = CURRENT_DATE
         """
 
         cursor.execute(sql)
@@ -20,14 +20,14 @@ class DashboardDAO:
 
         return total
 
-    #? obtener total de productos en inventario
+    #? Obtener total de productos en inventario
     def total_productos(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
         sql = """
             SELECT COUNT(*)
-            FROM "Productos"
+            FROM productos
         """
 
         cursor.execute(sql)
@@ -38,15 +38,15 @@ class DashboardDAO:
 
         return total
 
-    #? obtener productos en stock bajo
+    #? Obtener productos en stock bajo
     def stock_bajo(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
         sql = """
-            SELECT COUNT (*)
-            FROM "Productos"
-            WHERE existencia_producto <= minstock_producto
+            SELECT COUNT(*)
+            FROM productos
+            WHERE existencia <= min_stock
         """
 
         cursor.execute(sql)
@@ -57,14 +57,14 @@ class DashboardDAO:
 
         return total
 
-    #? obtener total en caja
-    def tota_caja(self):
+    #? Obtener total en caja (todas las ventas)
+    def total_caja(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
         sql = """
-            SELECT COALESCE(SUM(total_venta), 0)
-            FROM "Ventas"
+            SELECT COALESCE(SUM(total), 0)
+            FROM ventas
         """
 
         cursor.execute(sql)
@@ -75,20 +75,19 @@ class DashboardDAO:
 
         return total
 
-    #? tabla de productos mas vendidos 
+    #? Tabla de productos más vendidos
     def productos_mas_vendidos(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
         sql = """
             SELECT 
-                p.nombre_producto,
-                p.imagen_producto,
-                SUM(d.cantidad) AS Ventas
-            FROM "DetalleVenta" d
-            JOIN "Productos" p
-                ON p.id_producto = d.id_detalleventa
-            GROUP BY p.id_producto, p.nombre_producto, p.imagen_producto
+                p.nombre AS nombre_producto,
+                p.imagen AS imagen_producto,
+                SUM(dv.cantidad) AS ventas
+            FROM detalle_venta dv
+            JOIN productos p ON p.id = dv.id_producto
+            GROUP BY p.id, p.nombre, p.imagen
             ORDER BY ventas DESC
             LIMIT 5
         """

@@ -5,11 +5,14 @@ def dashboard(page: ft.Page):
 
     #? creamos intantacia y metodos
     dao = DashboardDAO()
+
     ventas_hoy = dao.ventas_hoy()
     productos = dao.total_productos()
     stock_bajo = dao.stock_bajo()
-    total_caja = dao.tota_caja()
+    total_caja = dao.total_caja()
+    productos_mas_vendidos = dao.productos_mas_vendidos()
 
+    #? textos para los targets
     txt_ventas_hoy=ft.Text(
         f"{ventas_hoy:,.2f}",
         size=14,
@@ -37,6 +40,18 @@ def dashboard(page: ft.Page):
             weight=ft.FontWeight.BOLD,
             color="#000000"
         )
+
+    #? productos mas vendidos
+    mayor = max(producto[2] for producto in productos_mas_vendidos)
+
+    for producto in productos_mas_vendidos:
+        porcentaje = producto[2] / mayor
+
+    barra = ft.ProgressBar(
+        value=porcentaje,
+        width=180,
+        color="#C2355F"
+    )
 
     #? encabezado de la ventana
     page.title = "Dashboard"
@@ -337,11 +352,17 @@ def dashboard(page: ft.Page):
                     expand=8,
                     blur=10,
                     border=ft.Border.all(2, "#5A1026"),
-                    content=ft.Text(
-                        "Productos mas vendidos", 
-                        color="#5A1026", 
-                        weight=ft.FontWeight.BOLD, 
-                        margin=10
+                    content=ft.Container(
+                        ft.Text(
+                            "Productos mas vendidos", 
+                            color="#5A1026", 
+                            weight=ft.FontWeight.BOLD, 
+                            margin=10
+                        ),
+
+                        ft.Text(
+                            barra
+                        )
                     ),
                 ),
 
