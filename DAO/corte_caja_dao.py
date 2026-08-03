@@ -107,3 +107,39 @@ class CorteCajaDAO:
             return 0
 
         return resultado[0]
+
+    #? carga los datos de la tabla corte de caja
+    def cargar_datos(self, filtro="TODO"):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT 
+                cc.id,
+                cc.fecha,
+                cc.hora_apertura,
+                cc.hora_cierre,
+                cc.monto_inicial,
+                cc.monto_final,
+                e.nombre || ' ' || e.apellidos AS empleado,
+                (cc.monto_final - cc.monto_inicial) AS total_ventas
+            FROM corte_caja cc
+            JOIN empleados e ON e.id = cc.id_empleado
+        """
+
+        if filtro == "ABIERTOS":
+            sql += " WHERE cc.hora_cierre IS NULL"
+        elif filtro == "CERRADOS":
+            sql += " WHERE cc.hora_cierre IS NOT NULL"
+        elif filtro == "DIA":
+            sql += " WHERE cc.fecha = CURRENT_DATE"
+
+        sql += " ORDER BY cc.fecha DESC, cc.hora_apertura DESC"
+
+        cursor.execute(sql)
+        registros = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return registros

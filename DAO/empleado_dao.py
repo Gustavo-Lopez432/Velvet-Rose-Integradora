@@ -111,3 +111,36 @@ class EmpleadoDAO:
             return 0
 
         return resultado[0]
+
+    #? carga los datos de la tabla empleado
+    def cargar_datos(self, filtro="TODO"):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT 
+                id,
+                nombre,
+                apellidos,
+                telefono,
+                correo,
+                usuario,
+                contrasena,
+                puesto
+            FROM empleados
+        """
+
+        if filtro == "VENDEDORES":
+            sql += " WHERE puesto = 'Vendedor'"
+        elif filtro == "ADMINISTRADORES":
+            sql += " WHERE puesto = 'Administrador'"
+
+        sql += " ORDER BY nombre ASC, apellidos ASC"
+
+        cursor.execute(sql)
+        registros = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return registros

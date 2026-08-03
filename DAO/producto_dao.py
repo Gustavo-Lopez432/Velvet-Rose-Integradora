@@ -127,3 +127,42 @@ class ProductoDAO:
             return 0
 
         return resultado[0]
+
+    #? carga los datos de la tabla productos
+    def cargar_datos(self, filtro="TODO"):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT 
+                id,
+                codigo_barras,
+                nombre,
+                marca,
+                talla,
+                color,
+                imagen,
+                precio,
+                proveedor,
+                existencia,
+                max_stock,
+                min_stock
+            FROM productos
+        """
+
+        if filtro == "STOCK_BAJO":
+            sql += " WHERE existencia <= min_stock"
+        elif filtro == "STOCK_ALTO":
+            sql += " WHERE existencia >= max_stock * 0.8"
+        elif filtro == "SIN_STOCK":
+            sql += " WHERE existencia = 0"
+
+        sql += " ORDER BY nombre ASC"
+
+        cursor.execute(sql)
+        registros = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return registros

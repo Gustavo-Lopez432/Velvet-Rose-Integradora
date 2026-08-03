@@ -107,3 +107,39 @@ class VentaDAO:
             return 0
 
         return resultado[0]
+
+    #? carga los datos de la tabla ventas
+    def cargar_datos(self, filtro="TODO"):
+
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT 
+                v.id,
+                TO_CHAR(v.fecha, 'DD/MM/YY HH24:MI') AS fecha,
+                v.folio,
+                e.nombre || ' ' || e.apellidos AS empleado,
+                v.subtotal,
+                v.iva,
+                v.total
+            FROM ventas v
+            JOIN empleados e ON e.id = v.id_empleado
+        """
+
+        if filtro == "DIA":
+            sql += " WHERE DATE(v.fecha) = CURRENT_DATE"
+        elif filtro == "MES":
+            sql += " WHERE EXTRACT(MONTH FROM v.fecha) = EXTRACT(MONTH FROM CURRENT_DATE)"
+        elif filtro == "ANO":
+            sql += " WHERE EXTRACT(YEAR FROM v.fecha) = EXTRACT(YEAR FROM CURRENT_DATE)"
+
+        sql += " ORDER BY v.fecha DESC"
+
+        cursor.execute(sql)
+        registros = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return registros

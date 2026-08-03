@@ -103,3 +103,34 @@ class DetalleVentaDAO:
             return 0
 
         return resultado[0]
+
+    #? carga los datos de la tabla detalle venta
+    def cargar_datos(self, id_venta=None):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT 
+                dv.id,
+                dv.id_venta,
+                dv.id_producto,
+                p.nombre AS producto,
+                dv.cantidad,
+                dv.precio_unitario,
+                dv.subtotal
+            FROM detalle_venta dv
+            JOIN productos p ON p.id = dv.id_producto
+        """
+
+        if id_venta:
+            sql += f" WHERE dv.id_venta = {id_venta}"
+
+        sql += " ORDER BY dv.id ASC"
+
+        cursor.execute(sql)
+        registros = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return registros

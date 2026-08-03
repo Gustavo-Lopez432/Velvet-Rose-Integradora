@@ -1,4 +1,4 @@
 import flet as ft
-from UI.dashboard_window import dashboard
+from UI.ventas_window import ventas_window
 
-ft.app (target=dashboard)
+ft.app (target=ventas_window)
