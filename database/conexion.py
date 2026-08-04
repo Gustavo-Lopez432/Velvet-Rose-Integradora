@@ -17,3 +17,4 @@ class Conexion:
             password=os.getenv("DB_PASSWORD"),
             port=os.getenv("DB_PORT")
         )
+    

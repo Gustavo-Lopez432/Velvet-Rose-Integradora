@@ -8,7 +8,7 @@ def empleados_window(page: ft.Page):
     registros = empleados_dao.cargar_datos()
 
     #? encabezado de la ventana
-    page.title = "Usuarios"
+    page.title = "Empleados"
     page.window_width = 1920
     page.window_height = 1080
     page.padding = 0
@@ -17,7 +17,7 @@ def empleados_window(page: ft.Page):
     #? titulo y subtitulo del contenido principal
     titulo = ft.Container(
         content=ft.Text(
-            "Usuarios",
+            "Empleados",
             size=30,
             weight=ft.FontWeight.BOLD,
             color="#5A1026",
@@ -93,7 +93,7 @@ def empleados_window(page: ft.Page):
                 
                 ft.ElevatedButton(
                     "Productos",
-                    bgcolor="#C2355F",
+                    bgcolor="#EF82A2",
                     color="#000000",
                     width=180,
                     style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
@@ -101,7 +101,7 @@ def empleados_window(page: ft.Page):
                 
                 ft.ElevatedButton(
                     "Empleados",
-                    bgcolor="#EF82A2",
+                    bgcolor="#C2355F",
                     color="#000000",
                     width=180,
                     style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
@@ -186,7 +186,7 @@ def empleados_window(page: ft.Page):
 
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
-            "Agregar usuario",
+            "Agregar empleado",
             bgcolor="#EF82A2",
             color="#000000",
         ),
