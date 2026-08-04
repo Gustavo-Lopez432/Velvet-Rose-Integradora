@@ -55,8 +55,7 @@ def dashboard(page: ft.Page):
 
     #? encabezado de la ventana
     page.title = "Dashboard"
-    page.window_width = 1920
-    page.window_height = 1080
+    page.window.full_screen = True
     page.padding = 0
     page.bgcolor = "#FFFFFF"
 
@@ -74,116 +73,6 @@ def dashboard(page: ft.Page):
         size=16,
         weight=ft.FontWeight.NORMAL,
         color = "#5A1026"
-    )
-
-    #? header
-    header = ft.Container(
-        bgcolor="#EF82A2",
-        height=100,
-        padding=20,
-        content=ft.Row(
-            controls=[
-                ft.Image(
-                    src="assets/Logo.png",
-                    width=200,
-                    height=150,
-                ),
-                ft.Text(
-                    "Velvet Rose",
-                    size=30,
-                    color="#FFFFFF",
-                    weight=ft.FontWeight.BOLD,
-                ),
-                ft.ElevatedButton(
-                    content=ft.Row(
-                    controls=[
-                        ft.Icon(ft.Icons.PERSON, color="#FFFFFF"),
-                        ft.Text("Bienvenido", color="#FFFFFF")
-                    ],
-                    spacing=5
-                    ),
-                    bgcolor="#EF82A2"
-                )
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-        ),
-    )
-
-    #? sidebar del dashboard
-    menu_lateral = ft.Container(
-        width=220,
-        bgcolor="#EF82A2",
-        padding=20,
-        content=ft.Column(
-            controls=[
-                ft.Text(
-                    "Módulos principales",
-                    size=16,
-                    color="#000000",
-                    weight=ft.FontWeight.BOLD
-                ),
-                
-                ft.Divider(color="#000000"),
-                
-                ft.ElevatedButton(
-                    "Dashboard",
-                    bgcolor="#C2355F",
-                    color="#FFFFFF",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                
-                ft.ElevatedButton(
-                    "Ventas",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                
-                ft.ElevatedButton(
-                    "Productos",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                
-                ft.ElevatedButton(
-                    "Empleados",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-
-                ft.Divider(color="#000000"),
-
-                ft.Text(
-                    "Operaciones",
-                    size=16,
-                    color="#000000",
-                    weight=ft.FontWeight.BOLD
-                ),
-
-                ft.ElevatedButton(
-                    "Corte de caja",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                                
-                ft.ElevatedButton(
-                    "Reportes",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-            ],
-            spacing=15
-        )
     )
 
     #? tarjetas de stats
@@ -417,20 +306,17 @@ def dashboard(page: ft.Page):
 
     #? Row con sidebar y contenido (SIN header)
     layout_interno = ft.Row(
-        controls=[menu_lateral, contenido],
+        controls=[contenido],
         expand=True
     )
 
     #? Layout final: header arriba, row abajo
     layout = ft.Column(
         controls=[
-            header,
             layout_interno
         ],
         spacing=0,
         expand=True
     )
     
-    page.add(layout)
-
-ft.app(target=dashboard)
+    return layout
