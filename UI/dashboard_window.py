@@ -1,6 +1,6 @@
 import flet as ft
+import flet_charts as fch
 from DAO.dashboard_dao import *
-
 
 def dashboard(page: ft.Page):
 
@@ -12,7 +12,7 @@ def dashboard(page: ft.Page):
     stock_bajo = dao.stock_bajo()
     total_caja = dao.total_caja()
     productos_mas_vendidos = dao.productos_mas_vendidos()
-    # resumen_ventas = dao.resumen_ventas()
+    resumen_ventas = dao.resumen_ventas("Semana")
 
     #? textos para los targets
     txt_ventas_hoy = ft.Text(
@@ -43,6 +43,22 @@ def dashboard(page: ft.Page):
         color="#000000"
     )
 
+    filtro_ventas = ft.Dropdown(
+        width=150,
+        height=35,
+        value="Semana",
+        color = "#000",
+
+        options=[
+            ft.dropdown.Option("Semana"),
+            ft.dropdown.Option("Mes"),
+            ft.dropdown.Option("Año"),
+            ft.dropdown.Option("Todo el tiempo")
+        ],
+    )
+
+    filtro_ventas.on_text_change = lambda e: actualizar_resumen(e.control.value)
+
     #? productos mas vendidos
     if productos_mas_vendidos:
 
@@ -54,10 +70,7 @@ def dashboard(page: ft.Page):
 
             porcentaje = ventas / max_ventas if max_ventas > 0 else 0
 
-            productos_porcentaje.append(
-                (nombre, imagen, ventas, porcentaje)
-            )
-
+            productos_porcentaje.append((nombre, imagen, ventas, porcentaje))
 
         #? Crear filas de la tabla
         filas_productos = []
@@ -97,7 +110,36 @@ def dashboard(page: ft.Page):
                 )
             )
 
+    grafica_ventas = fch.LineChart(
+        min_y=0,
+        expand=True,
+    )
+
     #? grafica
+    def actualizar_resumen(filtro):
+
+        datos = dao.resumen_ventas(filtro)
+
+        puntos = []
+
+        for i, dato in enumerate(datos):
+            ventas = dato[1]
+
+            puntos.append(
+                fch.LineChartDataPoint(
+                    i,
+                    float(ventas)
+                )
+            )
+
+        grafica_ventas.data_series = [
+            fch.LineChartData(
+                points=puntos,
+                curved=True
+            )
+        ]
+
+        page.update()
 
     #? titulo y subtitulo del contenido principal
     titulo = ft.Text(
@@ -268,6 +310,7 @@ def dashboard(page: ft.Page):
     )
 
     #? targets de tabla y grafica
+    actualizar_resumen("Semana")
     targets_bottom = ft.Container(
         content=ft.Row(
             controls=[
@@ -339,40 +382,36 @@ def dashboard(page: ft.Page):
                     border=ft.Border.all(1, "#5A1026"),
                     padding=10,
 
-                    content=ft.Row(
+                    content=ft.Column(
                         controls=[
 
-                            ft.Text(
-                                "Resumen de ventas",
-                                color="#5A1026",
-                                weight=ft.FontWeight.BOLD,
-                                size=20,
-                            ),
+                            #? Título y dropdown
+                            ft.Row(
+                                controls=[
 
-                            ft.Dropdown(
-                                width=200,
-                                height=35,
-                                hint_text="Filtrar por",
-                                color="#000000",
+                                    ft.Text(
+                                        "Resumen de ventas",
+                                        color="#5A1026",
+                                        weight=ft.FontWeight.BOLD,
+                                        size=20,
+                                    ),
 
-                                options=[
-                                    ft.dropdown.Option("Semana"),
-                                    ft.dropdown.Option("Mes"),
-                                    ft.dropdown.Option("Año"),
-                                    ft.dropdown.Option("Todo el tiempo"),
+                                    #? dropdown
+                                    filtro_ventas,
                                 ],
 
-                                # on_change=lambda e: actualizar_grafica(e.control.vlaue)
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             ),
 
+                            #? Gráfica
                             ft.Container(
+                                height=250,
                                 expand=True,
-                                # content=grafica_ventas()
-                            )
+                                content=grafica_ventas,
+                            ),
                         ],
 
-                        alignment=ft.MainAxisAlignment.SPACE_EVENLY,
-                        vertical_alignment=ft.CrossAxisAlignment.START,
+                        spacing=10,
                     ),
                 ),
             ],

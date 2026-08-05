@@ -10,7 +10,7 @@ def empleados_window(page: ft.Page):
     #? Título
     titulo = ft.Text(
         "Empleados",
-        size=30,
+        size=40,
         weight=ft.FontWeight.BOLD,
         color="#5A1026",
     )
