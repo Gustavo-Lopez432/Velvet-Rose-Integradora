@@ -1,7 +1,8 @@
 import flet as ft
 from DAO.venta_dao import VentaDAO
+from UI.agegar_venta_formulario import agregar_venta_formulario
 
-def ventas_window(page: ft.Page):
+def ventas_window(page: ft.Page, actualizar_vista):
 
     #? Instancia del DAO
     venta_dao = VentaDAO()
@@ -109,6 +110,9 @@ def ventas_window(page: ft.Page):
             "Agregar venta",
             bgcolor="#EF82A2",
             color="#000000",
+            on_click=lambda e: actualizar_vista(
+                agregar_venta_formulario(page)
+            )
         ),
         alignment=ft.Alignment.CENTER_RIGHT,
         padding=10
