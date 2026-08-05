@@ -1,7 +1,9 @@
 import flet as ft
 from DAO.producto_dao import ProductoDAO
+from UI.agregar_producto_formulario import productos_window_formulario
 
-def productos_window(page: ft.Page):
+
+def productos_window(page: ft.Page, actualizar_vista):
 
     #? Instancia del DAO
     producto_dao = ProductoDAO()
@@ -10,7 +12,7 @@ def productos_window(page: ft.Page):
     #? Título
     titulo = ft.Text(
         "Productos",
-        size=30,
+        size=40,
         weight=ft.FontWeight.BOLD,
         color="#5A1026",
     )
@@ -88,6 +90,9 @@ def productos_window(page: ft.Page):
             "Agregar producto",
             bgcolor="#EF82A2",
             color="#000000",
+            on_click=lambda e: actualizar_vista(
+                productos_window_formulario(page)
+            )
         ),
         alignment=ft.Alignment.CENTER_RIGHT,
         padding=10
