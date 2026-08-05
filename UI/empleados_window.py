@@ -3,10 +3,11 @@ from DAO.empleado_dao import EmpleadoDAO
 
 def empleados_window(page: ft.Page):
 
-    #? instancias
+    #? Instancia del DAO
     empleados_dao = EmpleadoDAO()
     registros = empleados_dao.cargar_datos()
 
+    jorge-sanluis
     #? encabezado de la ventana
     page.title = "Empleados"
     page.window_width = 1920
@@ -134,41 +135,64 @@ def empleados_window(page: ft.Page):
             ],
             spacing=15
         )
+
+    #? Título
+    titulo = ft.Text(
+        "Empleados",
+        size=40,
+        weight=ft.FontWeight.BOLD,
+        color="#5A1026",
+         main
     )
 
-    #?barra de busqueda y dropdown
+    #? Barra de búsqueda
     contenidoBusqueda = ft.Row(
         controls=[
             ft.TextField(
                 hint_text="Buscar",
                 width=200,
-                height=120,
                 color="#000000",
             ),
-            
         ],
-        spacing=10,
         alignment=ft.MainAxisAlignment.END
     )
 
-    #?tabla de ventas
+    #? Tabla de empleados
     tabla = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("ID", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Nombre", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Apellidos", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Telefono", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Correo", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Usuario", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Contraseña", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Rol", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(
+                ft.Text("ID", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Nombre", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Apellidos", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Teléfono", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Correo", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Usuario", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Contraseña", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Rol", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
         ],
         rows=[],
         heading_row_color="#C2355F",
         heading_row_height=50,
     )
 
+    #? Agregar registros
     for registro in registros:
+
         tabla.rows.append(
             ft.DataRow(
                 cells=[
@@ -184,6 +208,19 @@ def empleados_window(page: ft.Page):
             )
         )
 
+    #? Scroll de la tabla
+    tablaHorizontal = ft.Row(
+        controls=[tabla],
+        scroll=ft.ScrollMode.AUTO,
+    )
+
+    tablaScroll = ft.Column(
+        controls=[tablaHorizontal],
+        scroll=ft.ScrollMode.AUTO,
+        expand=True
+    )
+
+    #? Botón agregar
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
             "Agregar empleado",
@@ -191,10 +228,10 @@ def empleados_window(page: ft.Page):
             color="#000000",
         ),
         alignment=ft.Alignment.CENTER_RIGHT,
-        padding=ft.Padding.all(10)
+        padding=10
     )
 
-    #? contenido principal del layout (SIN header)
+    #? Contenido de la vista
     contenido = ft.Container(
         content=ft.Column(
             controls=[
@@ -204,34 +241,17 @@ def empleados_window(page: ft.Page):
                         ft.Container(expand=True),
                         contenidoBusqueda,
                     ],
-                    alignment=ft.MainAxisAlignment.START,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER
                 ),
-                tabla,
+
+                tablaScroll,
+
                 botonAgregar,
             ],
-            spacing=10
+            spacing=10,
         ),
         padding=30,
         expand=True
     )
 
-    #? Row con sidebar y contenido (SIN header)
-    layout_interno = ft.Row(
-        controls=[menu_lateral, contenido],
-        expand=True
-    )
-
-    #? Layout final: header arriba, row abajo
-    layout = ft.Column(
-        controls=[
-            header,
-            layout_interno
-        ],
-        spacing=0,
-        expand=True
-    )
-    
-    page.add(layout)
-
-ft.app(target=empleados_window)
+    return contenido

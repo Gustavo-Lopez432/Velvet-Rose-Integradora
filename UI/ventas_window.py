@@ -3,152 +3,29 @@ from DAO.venta_dao import VentaDAO
 
 def ventas_window(page: ft.Page):
 
-    #? instacias de los objetos 
+    #? Instancia del DAO
     venta_dao = VentaDAO()
     registros = venta_dao.cargar_datos()
 
-
-    #? encabezado de la ventana
-    page.title = "Ventas"
-    page.window_width = 1920
-    page.window_height = 1080
-    page.padding = 0
-    page.bgcolor = "#FFFFFF"
-
-    #? titulo y subtitulo del contenido principal
-    titulo = ft.Container(
-        content=ft.Text(
-            "Ventas",
-            size=30,
-            weight=ft.FontWeight.BOLD,
-            color="#5A1026",
-        ),
-        height=120,
-        width=200,
+    #? Título
+    titulo = ft.Text(
+        "Ventas",
+        size=40,
+        weight=ft.FontWeight.BOLD,
+        color="#5A1026",
     )
 
-    #? header
-    header = ft.Container(
-        bgcolor="#EF82A2",
-        height=100,
-        padding=20,
-        content=ft.Row(
-            controls=[
-                ft.Image(
-                    src="assets/Logo.png",
-                    width=200,
-                    height=150,
-                ),
-                ft.Text(
-                    "Velvet Rose",
-                    size=30,
-                    color="#FFFFFF",
-                    weight=ft.FontWeight.BOLD,
-                ),
-                ft.ElevatedButton(
-                    content=ft.Row(
-                        controls=[
-                            ft.Icon(ft.Icons.PERSON, color="#FFFFFF"),
-                            ft.Text("Bienvenido", color="#FFFFFF")
-                        ],
-                        spacing=5
-                    ),
-                    bgcolor="#EF82A2"
-                )
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-        ),
-    )
-
-    #? sidebar del dashboard
-    menu_lateral = ft.Container(
-        width=220,
-        bgcolor="#EF82A2",
-        padding=20,
-        content=ft.Column(
-            controls=[
-                ft.Text(
-                    "Módulos principales",
-                    size=16,
-                    color="#000000",
-                    weight=ft.FontWeight.BOLD
-                ),
-                
-                ft.Divider(color="#000000"),
-                
-                ft.ElevatedButton(
-                    "Dashboard",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                
-                ft.ElevatedButton(
-                    "Ventas",
-                    bgcolor="#C2355F",
-                    color="#FFFFFF",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                
-                ft.ElevatedButton(
-                    "Productos",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                
-                ft.ElevatedButton(
-                    "Empleados",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-
-                ft.Divider(color="#000000"),
-
-                ft.Text(
-                    "Operaciones",
-                    size=16,
-                    color="#000000",
-                    weight=ft.FontWeight.BOLD
-                ),
-
-                ft.ElevatedButton(
-                    "Corte de caja",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-                                
-                ft.ElevatedButton(
-                    "Reportes",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(text_style=ft.TextStyle(weight=ft.FontWeight.BOLD))
-                ),
-            ],
-            spacing=15
-        )
-    )
-
-    #?barra de busqueda y dropdown
+    #? Barra de búsqueda y filtro
     contenidoBusqueda = ft.Row(
         controls=[
             ft.TextField(
                 hint_text="Buscar",
                 width=200,
-                height=120,
                 color="#000000",
             ),
+
             ft.Dropdown(
                 width=200,
-                height=120,
                 hint_text="Filtrar por",
                 color="#000000",
                 options=[
@@ -163,24 +40,41 @@ def ventas_window(page: ft.Page):
         alignment=ft.MainAxisAlignment.END
     )
 
-    #?tabla de ventas
+
+    #? Tabla de ventas
     tabla = ft.DataTable(
         columns=[
-            ft.DataColumn(ft.Text("ID", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Fecha", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Folio", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Empleado", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Subtotal", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("IVA", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Total", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(
+                ft.Text("ID", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Fecha", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Folio", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Empleado", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Subtotal", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("IVA", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
+            ft.DataColumn(
+                ft.Text("Total", color="#FFFFFF", weight=ft.FontWeight.BOLD)
+            ),
         ],
-
         rows=[],
         heading_row_color="#C2355F",
         heading_row_height=50,
     )
 
+
+    #? Agregar registros a la tabla
     for registro in registros:
+
         tabla.rows.append(
             ft.DataRow(
                 cells=[
@@ -195,6 +89,21 @@ def ventas_window(page: ft.Page):
             )
         )
 
+
+    #? Scroll horizontal y vertical de la tabla
+    tablaHorizontal = ft.Row(
+        controls=[tabla],
+        scroll=ft.ScrollMode.AUTO,
+    )
+
+    tablaScroll = ft.Column(
+        controls=[tablaHorizontal],
+        scroll=ft.ScrollMode.AUTO,
+        expand=True
+    )
+
+
+    #? Botón agregar
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
             "Agregar venta",
@@ -202,10 +111,11 @@ def ventas_window(page: ft.Page):
             color="#000000",
         ),
         alignment=ft.Alignment.CENTER_RIGHT,
-        padding=ft.Padding.all(10)
+        padding=10
     )
 
-    #? contenido principal del layout (SIN header)
+
+    #? Contenido de la vista
     contenido = ft.Container(
         content=ft.Column(
             controls=[
@@ -215,34 +125,17 @@ def ventas_window(page: ft.Page):
                         ft.Container(expand=True),
                         contenidoBusqueda,
                     ],
-                    alignment=ft.MainAxisAlignment.START,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER
                 ),
-                tabla,
+
+                tablaScroll,
+
                 botonAgregar,
             ],
-            spacing=10
+            spacing=10,
         ),
         padding=30,
         expand=True
     )
 
-    #? Row con sidebar y contenido (SIN header)
-    layout_interno = ft.Row(
-        controls=[menu_lateral, contenido],
-        expand=True
-    )
-
-    #? Layout final: header arriba, row abajo
-    layout = ft.Column(
-        controls=[
-            header,
-            layout_interno
-        ],
-        spacing=0,
-        expand=True
-    )
-    
-    page.add(layout)
-
-ft.app(target=ventas_window)
+    return contenido
