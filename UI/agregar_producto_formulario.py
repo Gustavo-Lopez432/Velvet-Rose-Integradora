@@ -1,15 +1,14 @@
 import flet as ft
+from DAO.producto_dao import ProductoDAO
+from models.producto import Producto
 
+def productos_window_formulario(page: ft.Page, cancelar):
 
-def productos_window_formulario(page: ft.Page):
+    producto_dao = ProductoDAO()
 
-    #? configuracion de la pagina
     page.title = "Registrar producto"
     page.bgcolor = "#F9F3F4"
     page.padding = 0
-
-
-    #? datos para los dropdowns
 
     marcas = [
         "Nike",
@@ -48,40 +47,135 @@ def productos_window_formulario(page: ft.Page):
         "Proveedores Unidos"
     ]
 
-
-    #? campos del formulario
+    ancho_campo = 170
 
     codigo_barras = ft.TextField(
+        label="Código de barras",
         hint_text="Cod. Barras",
-        height=38,
-        width=134,
+        height=60,
+        width=ancho_campo,
         text_size=13,
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
         hint_style=ft.TextStyle(
             color="#A8B7C4"
-        )
+        ),
+        focused_border_color="#C2355F",
+        border_color="#000000"
     )
 
     nombre = ft.TextField(
+        label="Nombre",
         hint_text="Nombre producto",
-        height=38,
-        width=134,
+        height=60,
+        width=ancho_campo,
         text_size=13,
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
         hint_style=ft.TextStyle(
             color="#A8B7C4"
-        )
+        ),
+        focused_border_color="#C2355F",
+        border_color="#000000"
+    )
+
+    precio = ft.TextField(
+        label="Precio",
+        hint_text="$0.00",
+        height=60,
+        width=ancho_campo,
+        text_size=13,
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
+        focused_border_color="#C2355F",
+        border_color="#000000",
+        keyboard_type=ft.KeyboardType.NUMBER
+    )
+
+    max_stock = ft.TextField(
+        label="Máximo en stock",
+        hint_text="0",
+        height=60,
+        width=ancho_campo,
+        text_size=13,
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
+        focused_border_color="#C2355F",
+        border_color="#000000",
+        keyboard_type=ft.KeyboardType.NUMBER
+    )
+
+    min_stock = ft.TextField(
+        label="Mínimo en stock",
+        hint_text="0",
+        height=60,
+        width=ancho_campo,
+        text_size=13,
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
+        focused_border_color="#C2355F",
+        border_color="#000000",
+        keyboard_type=ft.KeyboardType.NUMBER
+    )
+
+    imagen = ft.TextField(
+        label="Imagen",
+        hint_text="Seleccione imagen",
+        height=60,
+        width=ancho_campo,
+        text_size=13,
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
+        focused_border_color="#C2355F",
+        border_color="#000000",
     )
 
     marca = ft.Dropdown(
-        hint_text="Marca",
-        height=38,
-        width=134,
+        label="Marca",
+        hint_text="Selecciona una marca",
+        height=60,
+        width=ancho_campo,
         text_size=13,
-        border_color="#AEBCC8",
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
         focused_border_color="#C2355F",
+        border_color="#000000",
         options=[
             ft.dropdown.Option(marca)
             for marca in marcas
@@ -89,12 +183,21 @@ def productos_window_formulario(page: ft.Page):
     )
 
     talla = ft.Dropdown(
-        hint_text="Talla",
-        height=38,
-        width=134,
+        label="Talla",
+        hint_text="Selecciona una talla",
+        height=60,
+        width=ancho_campo,
         text_size=13,
-        border_color="#AEBCC8",
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
         focused_border_color="#C2355F",
+        border_color="#000000",
         options=[
             ft.dropdown.Option(talla)
             for talla in tallas
@@ -102,12 +205,21 @@ def productos_window_formulario(page: ft.Page):
     )
 
     color = ft.Dropdown(
-        hint_text="Color",
-        height=38,
-        width=134,
+        label="Color",
+        hint_text="Selecciona un color",
+        height=60,
+        width=ancho_campo,
         text_size=13,
-        border_color="#AEBCC8",
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
         focused_border_color="#C2355F",
+        border_color="#000000",
         options=[
             ft.dropdown.Option(color)
             for color in colores
@@ -115,92 +227,26 @@ def productos_window_formulario(page: ft.Page):
     )
 
     proveedor = ft.Dropdown(
-        hint_text="Proveedor",
-        height=38,
-        width=134,
+        label="Proveedor",
+        hint_text="Selecciona un proveedor",
+        height=60,
+        width=ancho_campo,
         text_size=13,
-        border_color="#AEBCC8",
+        color="#000000",
+        label_style=ft.TextStyle(
+            color="#66727C",
+            size=16
+        ),
+        hint_style=ft.TextStyle(
+            color="#A8B7C4"
+        ),
         focused_border_color="#C2355F",
+        border_color="#000000",
         options=[
             ft.dropdown.Option(proveedor)
             for proveedor in proveedores
         ]
     )
-
-    precio = ft.TextField(
-        hint_text="$0.00",
-        height=38,
-        width=134,
-        text_size=13,
-        keyboard_type=ft.KeyboardType.NUMBER,
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        )
-    )
-
-    max_stock = ft.TextField(
-        hint_text="0",
-        height=38,
-        width=134,
-        text_size=13,
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        )
-    )
-
-    min_stock = ft.TextField(
-        hint_text="0",
-        height=38,
-        width=134,
-        text_size=13,
-        keyboard_type=ft.KeyboardType.NUMBER,
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        )
-    )
-
-    imagen = ft.TextField(
-        hint_text="Seleccione imagen",
-        height=38,
-        width=146,
-        text_size=13,
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
-        read_only=True
-    )
-
-
-    #? botones
-
-    btn_agregar = ft.ElevatedButton(
-        "Agregar",
-        icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-        width=84,
-        height=28,
-        bgcolor="#E96791",
-        color="#FFFFFF"
-    )
-
-    btn_cancelar = ft.ElevatedButton(
-        "Cancelar",
-        icon=ft.Icons.CANCEL_OUTLINED,
-        width=87,
-        height=28,
-        bgcolor="#E96791",
-        color="#FFFFFF"
-    )
-
-
-    #? titulo
 
     titulo = ft.Text(
         "Registre un producto",
@@ -209,161 +255,145 @@ def productos_window_formulario(page: ft.Page):
         color="#5A1026"
     )
 
+    def cancelar_formulario(e):
+        cancelar()
 
-    #? filas del formulario
+    def agregar_producto(e):
+
+        if not codigo_barras.value:
+            codigo_barras.error_text = "Ingresa el código de barras"
+            codigo_barras.update()
+            return
+
+        if not nombre.value:
+            nombre.error_text = "Ingresa el nombre"
+            nombre.update()
+            return
+
+        if not marca.value:
+            marca.error_text = "Selecciona una marca"
+            marca.update()
+            return
+
+        if not talla.value:
+            talla.error_text = "Selecciona una talla"
+            talla.update()
+            return
+
+        if not color.value:
+            color.error_text = "Selecciona un color"
+            color.update()
+            return
+
+        if not proveedor.value:
+            proveedor.error_text = "Selecciona un proveedor"
+            proveedor.update()
+            return
+
+        if not precio.value:
+            precio.error_text = "Ingresa el precio"
+            precio.update()
+            return
+
+        if not max_stock.value:
+            max_stock.error_text = "Ingresa el stock máximo"
+            max_stock.update()
+            return
+
+        if not min_stock.value:
+            min_stock.error_text = "Ingresa el stock mínimo"
+            min_stock.update()
+            return
+
+        producto = Producto(
+            id=None,
+            codigoBarras=codigo_barras.value,
+            nombre=nombre.value,
+            marca=marca.value,
+            talla=talla.value,
+            color=color.value,
+            imagen=imagen.value,
+            precio=float(precio.value),
+            proveedor=proveedor.value,
+            existencia=0,
+            maxStock=int(max_stock.value),
+            minStock=int(min_stock.value)
+        )
+
+        if producto_dao.existe_codigo_barras(codigo_barras.value):
+            codigo_barras.error_text = "Este código de barras ya está registrado"
+            codigo_barras.update()
+            return
+
+        producto_dao.insert(producto)
+
+        print("Producto agregado correctamente")
+
+    btn_agregar = ft.ElevatedButton(
+        "Agregar",
+        icon=ft.Icons.ADD_CIRCLE_OUTLINE,
+        width=130,
+        height=40,
+        bgcolor="#E96791",
+        color="#FFFFFF",
+        on_click=agregar_producto
+    )
+
+    btn_cancelar = ft.ElevatedButton(
+        "Cancelar",
+        icon=ft.Icons.CANCEL_OUTLINED,
+        width=130,
+        height=40,
+        bgcolor="#E96791",
+        color="#FFFFFF",
+        on_click=lambda e: cancelar()
+    )
 
     fila_1 = ft.Row(
         controls=[
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Código de barras",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    codigo_barras
-                ],
-                spacing=5
-            ),
-
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Talla",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    talla
-                ],
-                spacing=5
-            ),
-
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Proveedor",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    proveedor
-                ],
-                spacing=5
-            )
+            codigo_barras,
+            nombre,
+            precio
         ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        width=550
     )
-
 
     fila_2 = ft.Row(
         controls=[
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Nombre",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    nombre
-                ],
-                spacing=5
-            ),
-
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Color",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    color
-                ],
-                spacing=5
-            ),
-
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Máximo en stock",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    max_stock
-                ],
-                spacing=5
-            )
-        ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-    )
-
-
-    fila_3 = ft.Row(
-        controls=[
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Marca",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    marca
-                ],
-                spacing=5
-            ),
-
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Precio",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    precio
-                ],
-                spacing=5
-            ),
-
-            ft.Column(
-                controls=[
-                    ft.Text(
-                        "Mínimo en stock",
-                        size=9,
-                        weight=ft.FontWeight.BOLD,
-                        color="#66727C"
-                    ),
-                    min_stock
-                ],
-                spacing=5
-            )
-        ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-    )
-
-
-    #? campo de imagen
-
-    campo_imagen = ft.Column(
-        controls=[
-            ft.Text(
-                "Imagen",
-                size=9,
-                weight=ft.FontWeight.BOLD,
-                color="#66727C"
-            ),
+            max_stock,
+            min_stock,
             imagen
         ],
-        spacing=5
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        width=550
     )
 
+    fila_dropdowns = ft.Row(
+        controls=[
+            marca,
+            talla,
+            color
+        ],
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        width=550
+    )
 
-    #? botones
+    fila_proveedor = ft.Row(
+        controls=[
+            ft.Container(
+                width=ancho_campo
+            ),
+
+            proveedor,
+
+            ft.Container(
+                width=ancho_campo
+            )
+        ],
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        width=550
+    )
 
     botones = ft.Row(
         controls=[
@@ -371,49 +401,56 @@ def productos_window_formulario(page: ft.Page):
             btn_cancelar
         ],
         alignment=ft.MainAxisAlignment.END,
-        spacing=22
+        spacing=22,
+        width=550
     )
 
-
-    #? cuadro principal
-
     formulario = ft.Container(
-        width=604,
-        height=443,
+        width=650,
+        height=600,
+
         border=ft.Border.all(
             1,
             "#E5A1B4"
         ),
+
         bgcolor="#FDF5F6",
+
         padding=25,
 
         content=ft.Column(
             controls=[
+
+                # Título
                 titulo,
 
+                # Campos normales
                 fila_1,
                 fila_2,
-                fila_3,
 
+                # Separación
                 ft.Container(
-                    content=campo_imagen,
-                    alignment=ft.Alignment.CENTER
+                    height=5
                 ),
 
+                # Dropdowns
+                fila_dropdowns,
+                fila_proveedor,
+
+                # Espacio antes de los botones
                 ft.Container(
-                    content=botones,
-                    expand=True,
-                    alignment=ft.Alignment.BOTTOM_RIGHT
-                )
+                    expand=True
+                ),
+
+                # Botones
+                botones
             ],
 
             spacing=13,
+
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
-
-
-    #? contenido principal
 
     layout = ft.Container(
         content=formulario,

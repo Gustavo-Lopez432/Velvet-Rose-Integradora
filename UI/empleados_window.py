@@ -1,8 +1,9 @@
 import flet as ft
 from DAO.empleado_dao import EmpleadoDAO
+from UI.agregar_empleado_formulario import empleados_window_formulario
 
 
-def empleados_window(page: ft.Page):
+def empleados_window(page: ft.Page, actualizar_vista):
 
     # ? Instancia del DAO
     empleados_dao = EmpleadoDAO()
@@ -328,6 +329,9 @@ def empleados_window(page: ft.Page):
             "Agregar empleado",
             bgcolor="#EF82A2",
             color="#000000",
+            on_click=lambda e: actualizar_vista(
+                empleados_window_formulario(page)
+            )
         ),
         alignment=ft.Alignment.CENTER_RIGHT,
         padding=10

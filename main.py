@@ -135,7 +135,9 @@ def main(page: ft.Page):
                     bgcolor="#EF82A2",
                     color="#000000",
                     width=180,
-                    on_click=lambda e: actualizar_vista(empleados_window(page)),
+                    on_click=lambda e: actualizar_vista(
+                        empleados_window(page, actualizar_vista)
+                    ),
                     style=ft.ButtonStyle(
                         text_style=ft.TextStyle(
                             weight=ft.FontWeight.BOLD
