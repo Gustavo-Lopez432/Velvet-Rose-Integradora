@@ -91,7 +91,12 @@ def productos_window(page: ft.Page, actualizar_vista):
             bgcolor="#EF82A2",
             color="#000000",
             on_click=lambda e: actualizar_vista(
-                productos_window_formulario(page)
+                productos_window_formulario(
+                    page,
+                    lambda: actualizar_vista(
+                        productos_window(page, actualizar_vista)
+                    )
+                )
             )
         ),
         alignment=ft.Alignment.CENTER_RIGHT,

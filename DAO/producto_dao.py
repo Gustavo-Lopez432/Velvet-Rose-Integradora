@@ -166,3 +166,19 @@ class ProductoDAO:
         conexion.close()
 
         return registros
+
+    def existe_codigo_barras(self, codigo_barras):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+    
+        cursor.execute(
+            "SELECT 1 FROM productos WHERE codigo_barras = %s",
+            (codigo_barras,)
+        )
+    
+        resultado = cursor.fetchone()
+    
+        cursor.close()
+        conexion.close()
+    
+        return resultado is not None
