@@ -2,12 +2,39 @@ import flet as ft
 from DAO.producto_dao import ProductoDAO
 from UI.agregar_producto_formulario import productos_window_formulario
 
-
 def productos_window(page: ft.Page, actualizar_vista):
 
     #? Instancia del DAO
     producto_dao = ProductoDAO()
     registros = producto_dao.cargar_datos()
+
+    campoBusqueda = ft.TextField(
+        hint_text="Buscar",
+        width=200,
+        color="#000000",
+    )
+
+    #? Función para construir filas a partir de una lista de registros
+    def construir_filas(lista_registros):
+        return [
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(ft.Text(str(r[0]), color="#000000")),
+                    ft.DataCell(ft.Text(r[1], color="#000000")),
+                    ft.DataCell(ft.Text(r[2], color="#000000")),
+                    ft.DataCell(ft.Text(r[3], color="#000000")),
+                    ft.DataCell(ft.Text(r[4], color="#000000")),
+                    ft.DataCell(ft.Text(r[5], color="#000000")),
+                    ft.DataCell(ft.Text(r[6], color="#000000")),
+                    ft.DataCell(ft.Text(str(r[7]), color="#000000")),
+                    ft.DataCell(ft.Text(r[8], color="#000000")),
+                    ft.DataCell(ft.Text(str(r[9]), color="#000000")),
+                    ft.DataCell(ft.Text(str(r[10]), color="#000000")),
+                    ft.DataCell(ft.Text(str(r[11]), color="#000000")),
+                ]
+            )
+            for r in lista_registros
+        ]
 
     #? Título
     titulo = ft.Text(
@@ -19,13 +46,7 @@ def productos_window(page: ft.Page, actualizar_vista):
 
     #? Barra de búsqueda
     contenidoBusqueda = ft.Row(
-        controls=[
-            ft.TextField(
-                hint_text="Buscar",
-                width=200,
-                color="#000000",
-            ),
-        ],
+        controls=[campoBusqueda],
         alignment=ft.MainAxisAlignment.END
     )
 
@@ -50,27 +71,25 @@ def productos_window(page: ft.Page, actualizar_vista):
         heading_row_height=50,
     )
 
-    #? Agregar registros
-    for registro in registros:
+    #? Filtrado según texto de búsqueda
+    def buscar_productos(e):
+        texto = e.control.value.strip().lower()
+        if texto == "":
+            filtrados = registros
+        else:
+            filtrados = [
+                r for r in registros
+                if texto in str(r[1]).lower()
+                or texto in str(r[2]).lower()
+                or texto in str(r[3]).lower()
+            ]
+        tabla.rows = construir_filas(filtrados)
+        page.update()
 
-        tabla.rows.append(
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(registro[0]), color="#000000")),
-                    ft.DataCell(ft.Text(registro[1], color="#000000")),
-                    ft.DataCell(ft.Text(registro[2], color="#000000")),
-                    ft.DataCell(ft.Text(registro[3], color="#000000")),
-                    ft.DataCell(ft.Text(registro[4], color="#000000")),
-                    ft.DataCell(ft.Text(registro[5], color="#000000")),
-                    ft.DataCell(ft.Text(registro[6], color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[7]), color="#000000")),
-                    ft.DataCell(ft.Text(registro[8], color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[9]), color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[10]), color="#000000")),
-                    ft.DataCell(ft.Text(str(registro[11]), color="#000000")),
-                ]
-            )
-        )
+    campoBusqueda.on_change = buscar_productos
+
+    #? Agregar registros
+    tabla.rows = construir_filas(registros)
 
     #? Scroll de la tabla
     tablaHorizontal = ft.Row(

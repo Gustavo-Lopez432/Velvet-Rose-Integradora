@@ -1,17 +1,24 @@
 import flet as ft
+from DAO.empleado_dao import EmpleadoDAO
+from models.empleado import Empleado
 
+def empleados_window_formulario(page: ft.Page, cancelar):
 
-def empleados_window_formulario(page: ft.Page):
+    #? instancias
+    empleado_dao = EmpleadoDAO()
 
+    #? configuracion de la ventana
     page.title = "Registrar empleado"
     page.bgcolor = "#F9F3F4"
     page.padding = 0
 
+    #? opciones del dropdown
     puestos = [
         "Vendedor",
         "Administrador",
     ]
 
+    #? inputs del formulario
     ancho_campo = 170
 
     nombre = ft.TextField(
@@ -21,18 +28,15 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F"
+        focused_border_color="#C2355F",
+        border_color="#000000"
     )
 
     apellidos = ft.TextField(
@@ -42,18 +46,15 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F"
+        focused_border_color="#C2355F",
+        border_color="#000000"
     )
 
     telefono = ft.TextField(
@@ -63,19 +64,15 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
         focused_border_color="#C2355F",
-
+        border_color="#000000",
         keyboard_type=ft.KeyboardType.PHONE
     )
 
@@ -86,19 +83,15 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
         focused_border_color="#C2355F",
-
+        border_color="#000000",
         keyboard_type=ft.KeyboardType.EMAIL
     )
 
@@ -109,18 +102,15 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F"
+        focused_border_color="#C2355F",
+        border_color="#000000"
     )
 
     contrasena = ft.TextField(
@@ -130,19 +120,15 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
         focused_border_color="#C2355F",
-
+        border_color="#000000",
         password=True,
         can_reveal_password=True
     )
@@ -154,25 +140,22 @@ def empleados_window_formulario(page: ft.Page):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-
         label_style=ft.TextStyle(
             color="#66727C",
             size=16
         ),
-
         hint_style=ft.TextStyle(
             color="#A8B7C4"
         ),
-
-        border_color="#AEBCC8",
         focused_border_color="#C2355F",
-
+        border_color="#000000",
         options=[
             ft.dropdown.Option(puesto)
             for puesto in puestos
         ]
     )
 
+    #? titulo
     titulo = ft.Text(
         "Registre un empleado",
         size=30,
@@ -180,13 +163,77 @@ def empleados_window_formulario(page: ft.Page):
         color="#5A1026"
     )
 
+    #? funciones para agregar empleado y cancelar
+    def cancelar_formulario(e):
+        cancelar()
+
+    def agregar_empleado(e):
+
+        #? validaciones de los campos
+        if not nombre.value:
+            nombre.error_text = "Ingresa el nombre"
+            nombre.update()
+            return
+
+        if not apellidos.value:
+            apellidos.error_text = "Ingresa los apellidos"
+            apellidos.update()
+            return
+
+        if not telefono.value:
+            telefono.error_text = "Ingresa el teléfono"
+            telefono.update()
+            return
+
+        if not correo.value:
+            correo.error_text = "Ingresa el correo electrónico"
+            correo.update()
+            return
+
+        if not usuario.value:
+            usuario.error_text = "Ingresa el usuario"
+            usuario.update()
+            return
+
+        if not contrasena.value:
+            contrasena.error_text = "Ingresa la contraseña"
+            contrasena.update()
+            return
+
+        if not puesto.value:
+            puesto.error_text = "Selecciona un puesto"
+            puesto.update()
+            return
+
+        #? creamos el objeto empleado
+        empleado = Empleado(
+            id=None,
+            nombre=nombre.value,
+            apellidos=apellidos.value,
+            telefono=telefono.value,
+            correo=correo.value,
+            usuario=usuario.value,
+            contrasena=contrasena.value,
+            puesto=puesto.value
+        )
+
+        #? insertamos el empleado
+        empleado_dao.insert(empleado)
+
+        print("Empleado agregado correctamente")
+
+        #? regresamos a la ventana anterior
+        cancelar()
+
+    #? botones de agregar empleado y cancelar
     btn_agregar = ft.ElevatedButton(
         "Agregar",
         icon=ft.Icons.ADD_CIRCLE_OUTLINE,
         width=130,
         height=40,
         bgcolor="#E96791",
-        color="#FFFFFF"
+        color="#FFFFFF",
+        on_click=agregar_empleado
     )
 
     btn_cancelar = ft.ElevatedButton(
@@ -195,18 +242,18 @@ def empleados_window_formulario(page: ft.Page):
         width=130,
         height=40,
         bgcolor="#E96791",
-        color="#FFFFFF"
+        color="#FFFFFF",
+        on_click=cancelar_formulario
     )
 
+    #? filas de los campos
     fila_1 = ft.Row(
         controls=[
             nombre,
             apellidos,
             telefono
         ],
-
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-
         width=550
     )
 
@@ -216,9 +263,7 @@ def empleados_window_formulario(page: ft.Page):
             usuario,
             contrasena
         ],
-
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-
         width=550
     )
 
@@ -234,9 +279,7 @@ def empleados_window_formulario(page: ft.Page):
                 width=ancho_campo
             )
         ],
-
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-
         width=550
     )
 
@@ -245,14 +288,12 @@ def empleados_window_formulario(page: ft.Page):
             btn_agregar,
             btn_cancelar
         ],
-
         alignment=ft.MainAxisAlignment.END,
-
-        spacing=15,
-
+        spacing=22,
         width=550
     )
 
+    #? contenedor principal
     formulario = ft.Container(
         width=650,
         height=500,
@@ -268,39 +309,29 @@ def empleados_window_formulario(page: ft.Page):
 
         content=ft.Column(
             controls=[
-
-                # Título
                 titulo,
-
-                # Nombre / Apellidos / Teléfono
                 fila_1,
-
-                # Correo / Usuario / Contraseña
                 fila_2,
 
-                # Separación
                 ft.Container(
                     height=5
                 ),
 
-                # Puesto
                 fila_puesto,
 
-                # Espacio
                 ft.Container(
                     expand=True
                 ),
 
-                # Botones
                 botones
             ],
 
             spacing=18,
-
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
+    #? agregamos al layout
     layout = ft.Container(
         content=formulario,
         expand=True,

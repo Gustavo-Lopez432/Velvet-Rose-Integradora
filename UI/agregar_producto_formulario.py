@@ -4,12 +4,15 @@ from models.producto import Producto
 
 def productos_window_formulario(page: ft.Page, cancelar):
 
+    #? instancias
     producto_dao = ProductoDAO()
 
+    #? configuracion de la ventana
     page.title = "Registrar producto"
     page.bgcolor = "#F9F3F4"
     page.padding = 0
 
+    #? opciones de los dropdowns
     marcas = [
         "Nike",
         "Adidas",
@@ -47,6 +50,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         "Proveedores Unidos"
     ]
 
+
+    #? inputs del formulario
     ancho_campo = 170
 
     codigo_barras = ft.TextField(
@@ -255,11 +260,13 @@ def productos_window_formulario(page: ft.Page, cancelar):
         color="#5A1026"
     )
 
+    #? funciones para agregar producto y cancelar 
     def cancelar_formulario(e):
         cancelar()
 
     def agregar_producto(e):
 
+        #? validaciones de los campos
         if not codigo_barras.value:
             codigo_barras.error_text = "Ingresa el código de barras"
             codigo_barras.update()
@@ -328,7 +335,9 @@ def productos_window_formulario(page: ft.Page, cancelar):
         producto_dao.insert(producto)
 
         print("Producto agregado correctamente")
+        cancelar()
 
+    #? botones de agregar producto y cancelar
     btn_agregar = ft.ElevatedButton(
         "Agregar",
         icon=ft.Icons.ADD_CIRCLE_OUTLINE,
@@ -349,6 +358,7 @@ def productos_window_formulario(page: ft.Page, cancelar):
         on_click=lambda e: cancelar()
     )
 
+    #? filas de los campos
     fila_1 = ft.Row(
         controls=[
             codigo_barras,
@@ -405,6 +415,7 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=550
     )
 
+    #? contenedor principal
     formulario = ft.Container(
         width=650,
         height=600,
@@ -421,37 +432,30 @@ def productos_window_formulario(page: ft.Page, cancelar):
         content=ft.Column(
             controls=[
 
-                # Título
                 titulo,
-
-                # Campos normales
                 fila_1,
                 fila_2,
 
-                # Separación
                 ft.Container(
                     height=5
                 ),
 
-                # Dropdowns
                 fila_dropdowns,
                 fila_proveedor,
 
-                # Espacio antes de los botones
                 ft.Container(
                     expand=True
                 ),
 
-                # Botones
                 botones
             ],
 
             spacing=13,
-
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
+    #? agregamos al layout
     layout = ft.Container(
         content=formulario,
         expand=True,

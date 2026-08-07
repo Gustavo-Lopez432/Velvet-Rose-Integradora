@@ -102,57 +102,18 @@ class DashboardDAO:
         return datos
 
     #? Resumen de ventas
-    def resumen_ventas(self, filtro="Semana"):
-    
+    def resumen_ventas_hoy(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
     
-        if filtro == "Semana":
-        
-            sql = """
-                SELECT
-                    DATE(fecha) AS periodo,
-                    COALESCE(SUM(total), 0) AS ventas
-                FROM ventas
-                WHERE fecha >= CURRENT_DATE - INTERVAL '6 days'
-                GROUP BY DATE(fecha)
-                ORDER BY periodo
-            """
-    
-        elif filtro == "Mes":
-        
-            sql = """
-                SELECT
-                    DATE(fecha) AS periodo,
-                    COALESCE(SUM(total), 0) AS ventas
-                FROM ventas
-                WHERE fecha >= CURRENT_DATE - INTERVAL '29 days'
-                GROUP BY DATE(fecha)
-                ORDER BY periodo
-            """
-    
-        elif filtro == "Año":
-        
-            sql = """
-                SELECT
-                    DATE_TRUNC('month', fecha) AS periodo,
-                    COALESCE(SUM(total), 0) AS ventas
-                FROM ventas
-                WHERE fecha >= CURRENT_DATE - INTERVAL '11 months'
-                GROUP BY DATE_TRUNC('month', fecha)
-                ORDER BY periodo
-            """
-    
-        else:
-        
-            sql = """
-                SELECT
-                    DATE(fecha) AS periodo,
-                    COALESCE(SUM(total), 0) AS ventas
-                FROM ventas
-                GROUP BY DATE(fecha)
-                ORDER BY periodo
-            """
+        sql = """
+            SELECT
+                fecha,
+                total
+            FROM ventas
+            WHERE DATE(fecha) = CURRENT_DATE
+            ORDER BY fecha
+        """
     
         cursor.execute(sql)
     
