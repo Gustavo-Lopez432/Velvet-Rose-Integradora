@@ -1,5 +1,5 @@
 import flet as ft
-from UI.dashboard_window import dashboard
+from UI.dashboard_window import dashboard_window
 from UI.ventas_window import ventas_window
 from UI.productos_window import productos_window
 from UI.empleados_window import empleados_window
@@ -92,7 +92,7 @@ def main(page: ft.Page):
                     bgcolor="#C2355F",
                     color="#FFFFFF",
                     width=180,
-                    on_click=lambda e: actualizar_vista(dashboard(page)),
+                    on_click=lambda e: actualizar_vista(dashboard_window(page)),
                     style=ft.ButtonStyle(
                         text_style=ft.TextStyle(
                             weight=ft.FontWeight.BOLD
@@ -191,6 +191,6 @@ def main(page: ft.Page):
         )
     )
 
-    actualizar_vista(dashboard(page))
+    actualizar_vista(dashboard_window(page))
 
 ft.app(target=main)

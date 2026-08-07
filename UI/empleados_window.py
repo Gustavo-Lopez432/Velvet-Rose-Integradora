@@ -16,146 +16,10 @@ def empleados_window(page: ft.Page, actualizar_vista):
     page.padding = 0
     page.bgcolor = "#FFFFFF"
 
-    # ? Header
-    header = ft.Container(
-        bgcolor="#EF82A2",
-        height=100,
-        padding=20,
-        content=ft.Row(
-            controls=[
-                ft.Image(
-                    src="assets/Logo.png",
-                    width=200,
-                    height=150,
-                ),
-
-                ft.Text(
-                    "Velvet Rose",
-                    size=30,
-                    color="#FFFFFF",
-                    weight=ft.FontWeight.BOLD,
-                ),
-
-                ft.ElevatedButton(
-                    content=ft.Row(
-                        controls=[
-                            ft.Icon(
-                                ft.Icons.PERSON,
-                                color="#FFFFFF"
-                            ),
-                            ft.Text(
-                                "Bienvenido",
-                                color="#FFFFFF"
-                            )
-                        ],
-                        spacing=5
-                    ),
-                    bgcolor="#EF82A2"
-                )
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-        ),
-    )
-
-    # ? Sidebar del dashboard
-    menu_lateral = ft.Container(
-        width=220,
-        bgcolor="#EF82A2",
-        padding=20,
-        content=ft.Column(
-            controls=[
-                ft.Text(
-                    "Módulos principales",
-                    size=16,
-                    color="#000000",
-                    weight=ft.FontWeight.BOLD
-                ),
-
-                ft.Divider(color="#000000"),
-
-                ft.ElevatedButton(
-                    "Dashboard",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(
-                        text_style=ft.TextStyle(
-                            weight=ft.FontWeight.BOLD
-                        )
-                    )
-                ),
-
-                ft.ElevatedButton(
-                    "Ventas",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(
-                        text_style=ft.TextStyle(
-                            weight=ft.FontWeight.BOLD
-                        )
-                    )
-                ),
-
-                ft.ElevatedButton(
-                    "Productos",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(
-                        text_style=ft.TextStyle(
-                            weight=ft.FontWeight.BOLD
-                        )
-                    )
-                ),
-
-                ft.ElevatedButton(
-                    "Empleados",
-                    bgcolor="#C2355F",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(
-                        text_style=ft.TextStyle(
-                            weight=ft.FontWeight.BOLD
-                        )
-                    )
-                ),
-
-                ft.Divider(color="#000000"),
-
-                ft.Text(
-                    "Operaciones",
-                    size=16,
-                    color="#000000",
-                    weight=ft.FontWeight.BOLD
-                ),
-
-                ft.ElevatedButton(
-                    "Corte de caja",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(
-                        text_style=ft.TextStyle(
-                            weight=ft.FontWeight.BOLD
-                        )
-                    )
-                ),
-
-                ft.ElevatedButton(
-                    "Reportes",
-                    bgcolor="#EF82A2",
-                    color="#000000",
-                    width=180,
-                    style=ft.ButtonStyle(
-                        text_style=ft.TextStyle(
-                            weight=ft.FontWeight.BOLD
-                        )
-                    )
-                ),
-            ],
-            spacing=15
-        )
+    campoBusqueda = ft.TextField(
+        hint_text="Buscar",
+        width=200,
+        color="#000000",
     )
 
     # ? Título
@@ -168,13 +32,7 @@ def empleados_window(page: ft.Page, actualizar_vista):
 
     # ? Barra de búsqueda
     contenidoBusqueda = ft.Row(
-        controls=[
-            ft.TextField(
-                hint_text="Buscar",
-                width=200,
-                color="#000000",
-            ),
-        ],
+        controls=[campoBusqueda],
         alignment=ft.MainAxisAlignment.END
     )
 
@@ -237,6 +95,13 @@ def empleados_window(page: ft.Page, actualizar_vista):
                     weight=ft.FontWeight.BOLD
                 )
             ),
+            ft.DataColumn(
+                ft.Text(
+                    "Acción",
+                    color="#FFFFFF",
+                    weight=ft.FontWeight.BOLD
+                )
+            ),
         ],
 
         rows=[],
@@ -245,70 +110,87 @@ def empleados_window(page: ft.Page, actualizar_vista):
         heading_row_height=50,
     )
 
-    # ? Agregar registros
-    for registro in registros:
-
-        tabla.rows.append(
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(
-                        ft.Text(
-                            str(registro[0]),
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[1],
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[2],
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[3],
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[4],
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[5],
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[6],
-                            color="#000000"
-                        )
-                    ),
-
-                    ft.DataCell(
-                        ft.Text(
-                            registro[7],
-                            color="#000000"
-                        )
-                    ),
-                ]
+    #? Editar empleado
+    def editar_empleado(e, id_empleado):
+        actualizar_vista(
+            empleados_window_formulario(
+                page,
+                lambda: actualizar_vista(
+                    empleados_window(page, actualizar_vista)
+                ),
+                id_empleado
             )
         )
+
+    #? Desactivar empleado
+    def desactivar_empleado(e, id_empleado):
+        empleados_dao.cambiar_estado(id_empleado, "Inactivo")
+        actualizar_vista(
+            empleados_window(page, actualizar_vista)
+        )
+
+    #? Función para construir filas a partir de una lista de registros
+    def construir_filas(lista_registros):
+        filas = []
+
+        for r in lista_registros:
+            id_empleado = r[0]
+
+            filas.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(str(r[0]), color="#000000")),
+                        ft.DataCell(ft.Text(r[1], color="#000000")),
+                        ft.DataCell(ft.Text(r[2], color="#000000")),
+                        ft.DataCell(ft.Text(r[3], color="#000000")),
+                        ft.DataCell(ft.Text(r[4], color="#000000")),
+                        ft.DataCell(ft.Text(r[5], color="#000000")),
+                        ft.DataCell(ft.Text(r[6], color="#000000")),
+                        ft.DataCell(ft.Text(r[7], color="#000000")),
+                        ft.DataCell(
+                            ft.Row(
+                                controls=[
+                                    ft.IconButton(
+                                        icon=ft.Icons.EDIT,
+                                        icon_color="#5A1026",
+                                        tooltip="Editar",
+                                        on_click=lambda e, id=id_empleado: editar_empleado(e, id),
+                                    ),
+                                    ft.IconButton(
+                                        icon=ft.Icons.PERSON_OFF,
+                                        icon_color="#C2355F",
+                                        tooltip="Desactivar",
+                                        on_click=lambda e, id=id_empleado: desactivar_empleado(e, id),
+                                    ),
+                                ],
+                                spacing=0,
+                            )
+                        ),
+                    ]
+                )
+            )
+
+        return filas
+
+    #? Filtrado según texto de búsqueda (nombre, apellidos, usuario)
+    def buscar_empleados(e):
+        texto = e.control.value.strip().lower()
+        if texto == "":
+            filtrados = registros
+        else:
+            filtrados = [
+                r for r in registros
+                if texto in str(r[1]).lower()   # nombre
+                or texto in str(r[2]).lower()   # apellidos
+                or texto in str(r[5]).lower()   # usuario
+            ]
+        tabla.rows = construir_filas(filtrados)
+        page.update()
+
+    campoBusqueda.on_change = buscar_empleados
+
+    # ? Agregar registros
+    tabla.rows = construir_filas(registros)
 
     # ? Scroll horizontal de la tabla
     tablaHorizontal = ft.Row(
@@ -330,7 +212,12 @@ def empleados_window(page: ft.Page, actualizar_vista):
             bgcolor="#EF82A2",
             color="#000000",
             on_click=lambda e: actualizar_vista(
-                empleados_window_formulario(page)
+                empleados_window_formulario(
+                    page,
+                    lambda: actualizar_vista (
+                        empleados_window(page, actualizar_vista)
+                    )
+                )
             )
         ),
         alignment=ft.Alignment.CENTER_RIGHT,

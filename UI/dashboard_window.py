@@ -1,8 +1,9 @@
 import flet as ft
 import flet_charts as fch
-from DAO.dashboard_dao import *
+from DAO.dashboard_dao import DashboardDAO
+from datetime import date, datetime
 
-def dashboard(page: ft.Page):
+def dashboard_window(page: ft.Page):
 
     #? creamos intantacia y metodos
     dao = DashboardDAO()
@@ -12,62 +13,46 @@ def dashboard(page: ft.Page):
     stock_bajo = dao.stock_bajo()
     total_caja = dao.total_caja()
     productos_mas_vendidos = dao.productos_mas_vendidos()
-    resumen_ventas = dao.resumen_ventas("Semana")
 
     #? textos para los targets
     txt_ventas_hoy = ft.Text(
-        f"{ventas_hoy:,.2f}",
+        f"${ventas_hoy:,.2f}",
         size=20,
         weight=ft.FontWeight.BOLD,
         color="#000000"
     )
 
     txt_productos = ft.Text(
-        f"{productos:,.2f}",
+        f"{productos:,.0f}",
         size=20,
         weight=ft.FontWeight.BOLD,
         color="#000000"
     )
 
     txt_stock_bajo = ft.Text(
-        f"{stock_bajo:,.2f}",
+        f"{stock_bajo:,.0f}",
         size=20,
         weight=ft.FontWeight.BOLD,
         color="#000000"
     )
 
     txt_total_caja = ft.Text(
-        f"{total_caja:,.2f}",
+        f"${total_caja:,.2f}",
         size=20,
         weight=ft.FontWeight.BOLD,
         color="#000000"
     )
 
-    filtro_ventas = ft.Dropdown(
-        width=150,
-        height=35,
-        value="Semana",
-        color = "#000",
-
-        options=[
-            ft.dropdown.Option("Semana"),
-            ft.dropdown.Option("Mes"),
-            ft.dropdown.Option("Año"),
-            ft.dropdown.Option("Todo el tiempo")
-        ],
-    )
-
-    filtro_ventas.on_text_change = lambda e: actualizar_resumen(e.control.value)
-
     #? productos mas vendidos
     if productos_mas_vendidos:
 
-        max_ventas = productos_mas_vendidos[0][2]
+        max_ventas = float(productos_mas_vendidos[0][2])
 
         productos_porcentaje = []
 
         for nombre, imagen, ventas in productos_mas_vendidos:
 
+            ventas = float(ventas)
             porcentaje = ventas / max_ventas if max_ventas > 0 else 0
 
             productos_porcentaje.append((nombre, imagen, ventas, porcentaje))
@@ -89,23 +74,12 @@ def dashboard(page: ft.Page):
                         ),
 
                         ft.DataCell(
-                            ft.Text(str(ventas), color="#000")
-                        ),
-
-                        ft.DataCell(
                             ft.Container(
+                                content=ft.Text(str(int(ventas)), color="#000"),
+                                alignment=ft.Alignment.CENTER,
                                 width=120,
-                                height=10,
-                                bgcolor="#E5E5E5",
-                                border_radius=5,
-                                content=ft.Container(
-                                    width=120 * porcentaje,
-                                    height=10,
-                                    bgcolor="#5A1026",
-                                    border_radius=5
-                                )
                             )
-                        )
+                        ),
                     ],
                 )
             )
@@ -113,31 +87,110 @@ def dashboard(page: ft.Page):
     grafica_ventas = fch.LineChart(
         min_y=0,
         expand=True,
+        border=ft.Border.all(1, "#000000"),
+        horizontal_grid_lines=fch.ChartGridLines(
+            color="#FFFFFF",
+            width=1,
+        ),
+        left_axis=fch.ChartAxis(
+            label_size=40,
+        ),
+        bottom_axis=fch.ChartAxis(
+            label_size=30,
+        ),
     )
 
-    #? grafica
-    def actualizar_resumen(filtro):
+    def formatear_etiqueta(fecha_hora):
+        return fecha_hora.strftime("%H:%M")
 
-        datos = dao.resumen_ventas(filtro)
+    contenedor_grafica = ft.Container(
+        height=250,
+        width=350,
+        content=grafica_ventas,
+    )
+
+    #? funcion para actualizar el estado de la grafica
+    def actualizar_resumen():
+
+        datos = dao.resumen_ventas_hoy()
+
+        if not datos:
+            contenedor_grafica.content = ft.Column(
+                controls=[
+                    ft.Icon(ft.Icons.SHOW_CHART, size=40, color="#C2355F"),
+                    ft.Text(
+                        "Sin ventas registradas hoy",
+                        color="#5A1026",
+                        weight=ft.FontWeight.BOLD,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=10,
+            )
+            page.update()
+            return
+
+        contenedor_grafica.content = grafica_ventas
 
         puntos = []
+        etiquetas = []
+        valores_ventas = []
 
         for i, dato in enumerate(datos):
-            ventas = dato[1]
+            etiqueta = formatear_etiqueta(dato[0])
+            ventas = float(dato[1])
 
             puntos.append(
-                fch.LineChartDataPoint(
-                    i,
-                    float(ventas)
+                fch.LineChartDataPoint(i, ventas)
+            )
+
+            etiquetas.append(
+                fch.ChartAxisLabel(
+                    value=i,
+                    label=ft.Container(
+                        content=ft.Text(str(etiqueta), size=10, color="#000000"),
+                        padding=5,
+                    )
                 )
             )
+
+            valores_ventas.append(ventas)
 
         grafica_ventas.data_series = [
             fch.LineChartData(
                 points=puntos,
-                curved=True
+                curved=True,
+                color="#C2355F",
+                stroke_width=3,
             )
         ]
+
+        grafica_ventas.bottom_axis.labels = etiquetas
+        grafica_ventas.max_x = max(len(puntos) - 1, 1)
+
+        max_venta = max(valores_ventas) if valores_ventas else 0
+        max_venta = max_venta if max_venta > 0 else 100
+
+        pasos = 5
+        intervalo = max_venta / pasos
+
+        etiquetas_y = []
+        for i in range(pasos + 1):
+            valor = round(intervalo * i)
+            etiquetas_y.append(
+                fch.ChartAxisLabel(
+                    value=valor,
+                    label=ft.Container(
+                        content=ft.Text(f"${valor:,.0f}", size=10, color="#000000"),
+                        padding=5,
+                    )
+                )
+            )
+
+        grafica_ventas.left_axis.labels = etiquetas_y
+        grafica_ventas.max_y = (intervalo * pasos) * 1.15
+        grafica_ventas.horizontal_grid_lines.interval = intervalo if intervalo > 0 else 1
 
         page.update()
 
@@ -310,7 +363,7 @@ def dashboard(page: ft.Page):
     )
 
     #? targets de tabla y grafica
-    actualizar_resumen("Semana")
+    actualizar_resumen()
     targets_bottom = ft.Container(
         content=ft.Row(
             controls=[
@@ -359,13 +412,6 @@ def dashboard(page: ft.Page):
                                             weight=ft.FontWeight.BOLD,
                                         )
                                     ),
-
-                                    ft.DataColumn(
-                                        ft.Text(
-                                            "",
-                                            color="#FFFFFF",
-                                        )
-                                    ),
                                 ],
 
                                 rows=filas_productos,
@@ -395,9 +441,6 @@ def dashboard(page: ft.Page):
                                         weight=ft.FontWeight.BOLD,
                                         size=20,
                                     ),
-
-                                    #? dropdown
-                                    filtro_ventas,
                                 ],
 
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -405,9 +448,9 @@ def dashboard(page: ft.Page):
 
                             #? Gráfica
                             ft.Container(
-                                height=250,
                                 expand=True,
-                                content=grafica_ventas,
+                                alignment=ft.Alignment.BOTTOM_CENTER,
+                                content=contenedor_grafica,
                             ),
                         ],
 
