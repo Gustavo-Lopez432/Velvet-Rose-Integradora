@@ -97,6 +97,13 @@ def empleados_window(page: ft.Page, actualizar_vista):
             ),
             ft.DataColumn(
                 ft.Text(
+                    "Estado",
+                    color="#FFFFFF",
+                    weight=ft.FontWeight.BOLD
+                )
+            ),
+            ft.DataColumn(
+                ft.Text(
                     "Acción",
                     color="#FFFFFF",
                     weight=ft.FontWeight.BOLD
@@ -122,9 +129,10 @@ def empleados_window(page: ft.Page, actualizar_vista):
             )
         )
 
-    #? Desactivar empleado
-    def desactivar_empleado(e, id_empleado):
-        empleados_dao.cambiar_estado(id_empleado, "Inactivo")
+    #? Activar/Desactivar empleado
+    def cambiar_estado_empleado(e, id_empleado, estado_actual):
+        nuevo_estado = "Inactivo" if estado_actual == "Activo" else "Activo"
+        empleados_dao.cambiar_estado(id_empleado, nuevo_estado)
         actualizar_vista(
             empleados_window(page, actualizar_vista)
         )
@@ -135,6 +143,7 @@ def empleados_window(page: ft.Page, actualizar_vista):
 
         for r in lista_registros:
             id_empleado = r[0]
+            estado = r[8]
 
             filas.append(
                 ft.DataRow(
@@ -148,6 +157,13 @@ def empleados_window(page: ft.Page, actualizar_vista):
                         ft.DataCell(ft.Text(r[6], color="#000000")),
                         ft.DataCell(ft.Text(r[7], color="#000000")),
                         ft.DataCell(
+                            ft.Text(
+                                estado,
+                                color="#2E7D32" if estado == "Activo" else "#C62828",
+                                weight=ft.FontWeight.BOLD
+                            )
+                        ),
+                        ft.DataCell(
                             ft.Row(
                                 controls=[
                                     ft.IconButton(
@@ -157,10 +173,10 @@ def empleados_window(page: ft.Page, actualizar_vista):
                                         on_click=lambda e, id=id_empleado: editar_empleado(e, id),
                                     ),
                                     ft.IconButton(
-                                        icon=ft.Icons.PERSON_OFF,
-                                        icon_color="#C2355F",
-                                        tooltip="Desactivar",
-                                        on_click=lambda e, id=id_empleado: desactivar_empleado(e, id),
+                                        icon=ft.Icons.PERSON_OFF if estado == "Activo" else ft.Icons.PERSON,
+                                        icon_color="#C2355F" if estado == "Activo" else "#2E7D32",
+                                        tooltip="Desactivar" if estado == "Activo" else "Activar",
+                                        on_click=lambda e, id=id_empleado, est=estado: cambiar_estado_empleado(e, id, est),
                                     ),
                                 ],
                                 spacing=0,

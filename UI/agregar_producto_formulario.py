@@ -13,43 +13,17 @@ def productos_window_formulario(page: ft.Page, cancelar):
     page.padding = 0
 
     #? opciones de los dropdowns
-    marcas = [
-        "Nike",
-        "Adidas",
-        "New Balance",
-        "Converse",
-        "Vans",
-    ]
-
-    tallas = [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-    ]
-
+    marcas = ["Nike", "Adidas", "New Balance", "Converse", "Vans"]
+    tallas = ["XS", "S", "M", "L", "XL"]
     colores = [
-        "Negro",
-        "Blanco",
-        "Rojo",
-        "Azul",
-        "Verde",
-        "Amarillo",
-        "Naranja",
-        "Morado",
-        "Rosa",
-        "Café",
-        "Gris",
-        "Azul Marino"
+        "Negro", "Blanco", "Rojo", "Azul", "Verde", "Amarillo",
+        "Naranja", "Morado", "Rosa", "Café", "Gris", "Azul Marino"
     ]
-
     proveedores = [
         "Distribuidora Nacional S.A.",
         "Importadora Global",
         "Proveedores Unidos"
     ]
-
 
     #? inputs del formulario
     ancho_campo = 170
@@ -61,13 +35,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000"
     )
@@ -79,13 +48,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000"
     )
@@ -97,70 +61,66 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
         keyboard_type=ft.KeyboardType.NUMBER
     )
 
-    max_stock = ft.TextField(
-        label="Máximo en stock",
-        hint_text="0",
+    #? Nuevo campo: cantidad que se está ingresando ahora
+    cantidad = ft.TextField(
+        label="Cantidad",
+        hint_text="Piezas a ingresar",
         height=60,
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
+        focused_border_color="#C2355F",
+        border_color="#000000",
+        keyboard_type=ft.KeyboardType.NUMBER
+    )
+
+    #? Ahora opcionales, con hint indicándolo
+    max_stock = ft.TextField(
+        label="Máximo en stock (opcional)",
+        hint_text="Default: 50",
+        height=60,
+        width=ancho_campo,
+        text_size=13,
+        color="#000000",
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
         keyboard_type=ft.KeyboardType.NUMBER
     )
 
     min_stock = ft.TextField(
-        label="Mínimo en stock",
-        hint_text="0",
+        label="Mínimo en stock (opcional)",
+        hint_text="Default: 5",
         height=60,
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
         keyboard_type=ft.KeyboardType.NUMBER
     )
 
     imagen = ft.TextField(
-        label="Imagen",
+        label="Imagen (opcional)",
         hint_text="Seleccione imagen",
         height=60,
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
     )
@@ -172,19 +132,11 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[
-            ft.dropdown.Option(marca)
-            for marca in marcas
-        ]
+        options=[ft.dropdown.Option(m) for m in marcas]
     )
 
     talla = ft.Dropdown(
@@ -194,19 +146,11 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[
-            ft.dropdown.Option(talla)
-            for talla in tallas
-        ]
+        options=[ft.dropdown.Option(t) for t in tallas]
     )
 
     color = ft.Dropdown(
@@ -216,41 +160,25 @@ def productos_window_formulario(page: ft.Page, cancelar):
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[
-            ft.dropdown.Option(color)
-            for color in colores
-        ]
+        options=[ft.dropdown.Option(c) for c in colores]
     )
 
     proveedor = ft.Dropdown(
-        label="Proveedor",
+        label="Proveedor (opcional)",
         hint_text="Selecciona un proveedor",
         height=60,
         width=ancho_campo,
         text_size=13,
         color="#000000",
-        label_style=ft.TextStyle(
-            color="#66727C",
-            size=16
-        ),
-        hint_style=ft.TextStyle(
-            color="#A8B7C4"
-        ),
+        label_style=ft.TextStyle(color="#66727C", size=16),
+        hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[
-            ft.dropdown.Option(proveedor)
-            for proveedor in proveedores
-        ]
+        options=[ft.dropdown.Option(p) for p in proveedores]
     )
 
     titulo = ft.Text(
@@ -260,18 +188,54 @@ def productos_window_formulario(page: ft.Page, cancelar):
         color="#5A1026"
     )
 
-    #? funciones para agregar producto y cancelar 
+    #? funciones para agregar producto y cancelar
     def cancelar_formulario(e):
         cancelar()
 
+    def mostrar_mensaje(texto, color="#2E7D32"):
+        snack = ft.SnackBar(
+            content=ft.Text(texto),
+            bgcolor=color,
+        )
+        page.overlay.append(snack)
+        snack.open = True
+        page.update()
+
     def agregar_producto(e):
 
-        #? validaciones de los campos
+        #? el código de barras y la cantidad siempre son obligatorios
         if not codigo_barras.value:
             codigo_barras.error_text = "Ingresa el código de barras"
             codigo_barras.update()
             return
 
+        if not cantidad.value or not cantidad.value.isdigit() or int(cantidad.value) <= 0:
+            cantidad.error_text = "Ingresa una cantidad válida"
+            cantidad.update()
+            return
+
+        #? buscamos si el código de barras ya existe
+        productos_bd = producto_dao.cargar_datos()
+        producto_existente = None
+        for p in productos_bd:
+            if p[1] == codigo_barras.value:
+                producto_existente = p
+                break
+
+        #? CASO 1: el producto ya existe -> solo sumamos la cantidad a su existencia
+        if producto_existente:
+            id_producto = producto_existente[0]
+            nombre_producto = producto_existente[2]
+
+            producto_dao.sumar_existencia(id_producto, int(cantidad.value))
+
+            mostrar_mensaje(
+                f"Se sumaron {cantidad.value} piezas a '{nombre_producto}'. Existencia actualizada."
+            )
+            cancelar()
+            return
+
+        #? CASO 2: producto nuevo -> validamos el resto de los campos obligatorios
         if not nombre.value:
             nombre.error_text = "Ingresa el nombre"
             nombre.update()
@@ -292,25 +256,16 @@ def productos_window_formulario(page: ft.Page, cancelar):
             color.update()
             return
 
-        if not proveedor.value:
-            proveedor.error_text = "Selecciona un proveedor"
-            proveedor.update()
-            return
-
         if not precio.value:
             precio.error_text = "Ingresa el precio"
             precio.update()
             return
 
-        if not max_stock.value:
-            max_stock.error_text = "Ingresa el stock máximo"
-            max_stock.update()
-            return
-
-        if not min_stock.value:
-            min_stock.error_text = "Ingresa el stock mínimo"
-            min_stock.update()
-            return
+        #? campos opcionales con default
+        max_stock_valor = int(max_stock.value) if max_stock.value else 50
+        min_stock_valor = int(min_stock.value) if min_stock.value else 5
+        proveedor_valor = proveedor.value if proveedor.value else None
+        imagen_valor = imagen.value if imagen.value else None
 
         producto = Producto(
             id=None,
@@ -319,22 +274,17 @@ def productos_window_formulario(page: ft.Page, cancelar):
             marca=marca.value,
             talla=talla.value,
             color=color.value,
-            imagen=imagen.value,
+            imagen=imagen_valor,
             precio=float(precio.value),
-            proveedor=proveedor.value,
-            existencia=0,
-            maxStock=int(max_stock.value),
-            minStock=int(min_stock.value)
+            proveedor=proveedor_valor,
+            existencia=int(cantidad.value),
+            maxStock=max_stock_valor,
+            minStock=min_stock_valor
         )
-
-        if producto_dao.existe_codigo_barras(codigo_barras.value):
-            codigo_barras.error_text = "Este código de barras ya está registrado"
-            codigo_barras.update()
-            return
 
         producto_dao.insert(producto)
 
-        print("Producto agregado correctamente")
+        mostrar_mensaje(f"Producto '{nombre.value}' registrado correctamente.")
         cancelar()
 
     #? botones de agregar producto y cancelar
@@ -355,61 +305,40 @@ def productos_window_formulario(page: ft.Page, cancelar):
         height=40,
         bgcolor="#E96791",
         color="#FFFFFF",
-        on_click=lambda e: cancelar()
+        on_click=cancelar_formulario
     )
 
     #? filas de los campos
     fila_1 = ft.Row(
-        controls=[
-            codigo_barras,
-            nombre,
-            precio
-        ],
+        controls=[codigo_barras, nombre, precio],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         width=550
     )
 
     fila_2 = ft.Row(
-        controls=[
-            max_stock,
-            min_stock,
-            imagen
-        ],
+        controls=[cantidad, max_stock, min_stock],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         width=550
     )
 
     fila_dropdowns = ft.Row(
-        controls=[
-            marca,
-            talla,
-            color
-        ],
+        controls=[marca, talla, color],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         width=550
     )
 
     fila_proveedor = ft.Row(
         controls=[
-            ft.Container(
-                width=ancho_campo
-            ),
-
+            imagen,
             proveedor,
-
-            ft.Container(
-                width=ancho_campo
-            )
+            ft.Container(width=ancho_campo)
         ],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         width=550
     )
 
     botones = ft.Row(
-        controls=[
-            btn_agregar,
-            btn_cancelar
-        ],
+        controls=[btn_agregar, btn_cancelar],
         alignment=ft.MainAxisAlignment.END,
         spacing=22,
         width=550
@@ -418,44 +347,26 @@ def productos_window_formulario(page: ft.Page, cancelar):
     #? contenedor principal
     formulario = ft.Container(
         width=650,
-        height=600,
-
-        border=ft.Border.all(
-            1,
-            "#E5A1B4"
-        ),
-
+        height=620,
+        border=ft.Border.all(1, "#E5A1B4"),
         bgcolor="#FDF5F6",
-
         padding=25,
-
         content=ft.Column(
             controls=[
-
                 titulo,
                 fila_1,
                 fila_2,
-
-                ft.Container(
-                    height=5
-                ),
-
+                ft.Container(height=5),
                 fila_dropdowns,
                 fila_proveedor,
-
-                ft.Container(
-                    expand=True
-                ),
-
+                ft.Container(expand=True),
                 botones
             ],
-
             spacing=13,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
-    #? agregamos al layout
     layout = ft.Container(
         content=formulario,
         expand=True,
