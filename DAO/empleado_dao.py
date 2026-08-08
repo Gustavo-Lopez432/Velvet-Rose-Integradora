@@ -22,7 +22,8 @@ class EmpleadoDAO:
                 correo=registro[4],
                 usuario=registro[5],
                 contrasena=registro[6],
-                puesto=registro[7]
+                puesto=registro[7],
+                estado=registro[8]
             )
 
             empleados.append(empleado)
@@ -97,6 +98,18 @@ class EmpleadoDAO:
         cursor.close()
         conexion.close()
 
+    def cambiar_estado(self, id, nuevo_estado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = "UPDATE empleados SET estado = %s WHERE id = %s"
+
+        cursor.execute(sql, (nuevo_estado, id))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
     def obtener_ultimo_id(self):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
@@ -126,7 +139,8 @@ class EmpleadoDAO:
                 correo,
                 usuario,
                 contrasena,
-                puesto
+                puesto,
+                estado
             FROM empleados
         """
 

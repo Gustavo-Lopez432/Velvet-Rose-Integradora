@@ -14,27 +14,95 @@ def productos_window(page: ft.Page, actualizar_vista):
         color="#000000",
     )
 
+    #? Diálogo de confirmación para eliminar
+    dialogo_confirmar = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Eliminar producto"),
+        content=ft.Text("¿Seguro que quieres eliminar este producto? Esta acción no se puede deshacer."),
+    )
+
+    def cerrar_dialogo():
+        dialogo_confirmar.open = False
+        page.update()
+
+    def confirmar_eliminar(id_producto):
+        def eliminar_confirmado(e):
+            try:
+                producto_dao.delete(id_producto)
+                cerrar_dialogo()
+                actualizar_vista(productos_window(page, actualizar_vista))
+            except Exception as ex:
+                cerrar_dialogo()
+                snack = ft.SnackBar(
+                    content=ft.Text("No se puede eliminar: este producto ya tiene ventas registradas."),
+                    bgcolor="#C62828",
+                )
+                page.overlay.append(snack)
+                snack.open = True
+                page.update()
+
+        dialogo_confirmar.actions = [
+            ft.TextButton("Cancelar", on_click=lambda e: cerrar_dialogo()),
+            ft.TextButton("Eliminar", on_click=eliminar_confirmado),
+        ]
+        dialogo_confirmar.open = True
+        page.overlay.append(dialogo_confirmar)
+        page.update()
+
+    #? Editar producto
+    def editar_producto(e, id_producto):
+        actualizar_vista(
+            productos_window_formulario(
+                page,
+                lambda: actualizar_vista(
+                    productos_window(page, actualizar_vista)
+                ),
+                id_producto
+            )
+        )
+
     #? Función para construir filas a partir de una lista de registros
     def construir_filas(lista_registros):
-        return [
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(ft.Text(str(r[0]), color="#000000")),
-                    ft.DataCell(ft.Text(r[1], color="#000000")),
-                    ft.DataCell(ft.Text(r[2], color="#000000")),
-                    ft.DataCell(ft.Text(r[3], color="#000000")),
-                    ft.DataCell(ft.Text(r[4], color="#000000")),
-                    ft.DataCell(ft.Text(r[5], color="#000000")),
-                    ft.DataCell(ft.Text(r[6], color="#000000")),
-                    ft.DataCell(ft.Text(str(r[7]), color="#000000")),
-                    ft.DataCell(ft.Text(r[8], color="#000000")),
-                    ft.DataCell(ft.Text(str(r[9]), color="#000000")),
-                    ft.DataCell(ft.Text(str(r[10]), color="#000000")),
-                    ft.DataCell(ft.Text(str(r[11]), color="#000000")),
-                ]
+        filas = []
+
+        for r in lista_registros:
+            id_producto = r[0]
+
+            filas.append(
+                ft.DataRow(
+                    cells=[
+                        ft.DataCell(ft.Text(str(r[0]), color="#000000")),      # ID
+                        ft.DataCell(ft.Text(r[1], color="#000000")),           # Código de barras
+                        ft.DataCell(ft.Text(r[2], color="#000000")),           # Nombre
+                        ft.DataCell(ft.Text(r[3], color="#000000")),           # Marca
+                        ft.DataCell(ft.Text(r[4], color="#000000")),           # Talla
+                        ft.DataCell(ft.Text(r[5], color="#000000")),           # Color
+                        ft.DataCell(ft.Text(f"${float(r[7]):,.2f}", color="#000000")),  # Precio
+                        ft.DataCell(ft.Text(str(r[9]), color="#000000")),      # Existencia
+                        ft.DataCell(
+                            ft.Row(
+                                controls=[
+                                    ft.IconButton(
+                                        icon=ft.Icons.EDIT,
+                                        icon_color="#5A1026",
+                                        tooltip="Editar",
+                                        on_click=lambda e, id=id_producto: editar_producto(e, id),
+                                    ),
+                                    ft.IconButton(
+                                        icon=ft.Icons.DELETE_OUTLINE,
+                                        icon_color="#C2355F",
+                                        tooltip="Eliminar",
+                                        on_click=lambda e, id=id_producto: confirmar_eliminar(id),
+                                    ),
+                                ],
+                                spacing=0,
+                            )
+                        ),
+                    ]
+                )
             )
-            for r in lista_registros
-        ]
+
+        return filas
 
     #? Título
     titulo = ft.Text(
@@ -59,12 +127,9 @@ def productos_window(page: ft.Page, actualizar_vista):
             ft.DataColumn(ft.Text("Marca", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
             ft.DataColumn(ft.Text("Talla", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
             ft.DataColumn(ft.Text("Color", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Imagen", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
             ft.DataColumn(ft.Text("Precio", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Proveedor", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
             ft.DataColumn(ft.Text("Existencia", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Max stock", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
-            ft.DataColumn(ft.Text("Min stock", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
+            ft.DataColumn(ft.Text("Acción", color="#FFFFFF", weight=ft.FontWeight.BOLD)),
         ],
         rows=[],
         heading_row_color="#C2355F",

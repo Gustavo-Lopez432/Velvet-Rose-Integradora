@@ -182,3 +182,15 @@ class ProductoDAO:
         conexion.close()
     
         return resultado is not None
+
+    def sumar_existencia(self, id, cantidad):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = "UPDATE productos SET existencia = existencia + %s WHERE id = %s"
+
+        cursor.execute(sql, (cantidad, id))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
