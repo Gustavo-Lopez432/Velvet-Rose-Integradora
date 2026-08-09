@@ -25,17 +25,9 @@ def main(page: ft.Page):
         expand=True
     )
 
-    # ==========================================
-    # CAMBIAR VISTA
-    # ==========================================
-
     def actualizar_vista(vista):
         contenido.content = vista
         page.update()
-
-    # ==========================================
-    # MOSTRAR DASHBOARD
-    # ==========================================
 
     def mostrar_dashboard():
 
@@ -79,10 +71,6 @@ def main(page: ft.Page):
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
             ),
         )
-
-        # ==========================================
-        # SIDEBAR
-        # ==========================================
 
         sideBar = ft.Container(
             width=220,
@@ -212,10 +200,6 @@ def main(page: ft.Page):
             )
         )
 
-        # ==========================================
-        # MOSTRAR ESTRUCTURA PRINCIPAL
-        # ==========================================
-
         page.controls.clear()
 
         page.add(
@@ -241,10 +225,6 @@ def main(page: ft.Page):
             dashboard_window(page)
         )
 
-    # ==========================================
-    # MOSTRAR LOGIN
-    # ==========================================
-
     def mostrar_login():
 
         page.controls.clear()
@@ -258,11 +238,6 @@ def main(page: ft.Page):
 
         page.update()
 
-    # ==========================================
-    # INICIAR APLICACIÓN
-    # ==========================================
-
     mostrar_login()
-
 
 ft.app(target=main)
