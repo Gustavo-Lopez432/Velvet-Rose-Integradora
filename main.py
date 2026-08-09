@@ -16,7 +16,6 @@ def main(page: ft.Page):
     page.theme = ft.Theme(
         font_family="Dinsical"
     )
-
     page.bgcolor = "#FFFFFF"
     page.padding = 0
     page.window.full_screen = True
