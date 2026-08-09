@@ -1,11 +1,9 @@
 import flet as ft
-
 from UI.inicio_sesion_window import inicio_sesion_window
 from UI.dashboard_window import dashboard_window
 from UI.ventas_window import ventas_window
 from UI.productos_window import productos_window
 from UI.empleados_window import empleados_window
-
 
 def main(page: ft.Page):
 
