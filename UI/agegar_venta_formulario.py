@@ -7,13 +7,10 @@ from models.venta import Venta
 from models.detalle_venta import DetalleVenta
 
 
-def agregar_venta_formulario(page: ft.Page, cancelar):
+def agregar_venta_formulario(page: ft.Page, cancelar, id_empleado):
     page.title = "Registrar venta"
     page.bgcolor = "#F9F3F4"
     page.padding = 0
-
-    #? TODO: reemplazar por el id del empleado en sesión cuando exista login
-    id_empleado_actual = 1
 
     #? Instancias de los DAO
     producto_dao = ProductoDAO()
@@ -23,7 +20,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
     #? Cargar productos reales desde la base de datos
     productos_bd = producto_dao.cargar_datos()
 
-    #? Diccionario id -> {nombre, precio} para acceso rápido
+    #? Diccionario id -> {nombre, precio, existencia} para acceso rápido
     productos_dict = {
         str(p[0]): {"nombre": p[2], "precio": float(p[7]), "existencia": p[9]}
         for p in productos_bd
@@ -32,19 +29,20 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
     #? Carrito en memoria (aún no toca la base de datos)
     carrito = []
 
-    ancho_campo = 170
+    #? Mensaje único de validación (mismo patrón que login/empleados)
+    mensaje = ft.Text("", color=ft.Colors.RED)
+
+    def mostrar_mensaje(texto, color=ft.Colors.RED):
+        mensaje.value = texto
+        mensaje.color = color
+        page.update()
+
+    ancho_campo = 250
 
     producto = ft.Dropdown(
         label="Producto",
         hint_text="Selecciona un producto",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
         options=[
             ft.dropdown.Option(key=str(p[0]), text=p[2])
             for p in productos_bd
@@ -54,34 +52,18 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
     cantidad = ft.TextField(
         label="Cantidad",
         hint_text="0",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
         keyboard_type=ft.KeyboardType.NUMBER
     )
 
-    #? Autocompletar precio al elegir el producto + validación
-    def producto_seleccionado(e):
-        producto.error = None
-        page.update()
+    #? Limpia el mensaje al interactuar, igual que en login
+    def limpiar_mensaje(e=None):
+        if mensaje.value:
+            mensaje.value = ""
+            page.update()
 
-    def validar_cantidad(e):
-        valor = cantidad.value
-        if valor and not valor.isdigit():
-            cantidad.error = "Solo números"
-        elif valor and int(valor) <= 0:
-            cantidad.error = "Debe ser mayor a 0"
-        else:
-            cantidad.error = None
-        cantidad.update()
-
-    producto.on_change = producto_seleccionado
-    cantidad.on_change = validar_cantidad
+    producto.on_change = limpiar_mensaje
+    cantidad.on_change = limpiar_mensaje
 
     #? Tabla del carrito
     tabla_carrito = ft.DataTable(
@@ -93,7 +75,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
             ft.DataColumn(ft.Text("", color="#FFFFFF")),
         ],
         rows=[],
-        heading_row_color="#C2355F",
+        heading_row_color="#EF82A2",
         heading_row_height=40,
     )
 
@@ -144,26 +126,21 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
     #? Agrega el producto seleccionado al carrito
     def agregar_producto(e):
         if not producto.value:
-            producto.error = "Selecciona un producto"
-            producto.update()
+            mostrar_mensaje("Selecciona un producto")
             return
 
         if not cantidad.value or not cantidad.value.isdigit() or int(cantidad.value) <= 0:
-            cantidad.error = "Ingresa una cantidad válida"
-            cantidad.update()
+            mostrar_mensaje("Ingresa una cantidad válida")
             return
-
-        producto.error = None
-        cantidad.error = None
 
         datos = productos_dict.get(producto.value)
         if not datos:
+            mostrar_mensaje("Producto no encontrado")
             return
 
         cant = int(cantidad.value)
         precio_unit = datos["precio"]
 
-        #? Cuánto ya está en el carrito de este mismo producto (si se agregó antes)
         cantidad_en_carrito = sum(
             item["cantidad"] for item in carrito
             if item["id_producto"] == producto.value
@@ -172,8 +149,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
         cantidad_disponible = datos["existencia"] - cantidad_en_carrito
 
         if cant > cantidad_disponible:
-            cantidad.error = f"Solo hay {cantidad_disponible} piezas disponibles"
-            cantidad.update()
+            mostrar_mensaje(f"Solo hay {cantidad_disponible} piezas disponibles")
             return
 
         carrito.append({
@@ -189,6 +165,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
 
         producto.value = None
         cantidad.value = ""
+        mensaje.value = ""
 
         page.update()
 
@@ -198,8 +175,8 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
 
     #? Finalizar venta: guarda la venta y su detalle en la base de datos
     def finalizar_venta(e):
-
         if not carrito:
+            mostrar_mensaje("Agrega al menos un producto al carrito")
             return
 
         subtotal = sum(item["subtotal"] for item in carrito)
@@ -211,7 +188,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
             id=None,
             fecha=datetime.now(),
             folio=folio,
-            idEmpleado=id_empleado_actual,
+            idEmpleado=id_empleado,
             subtotal=subtotal,
             iva=iva,
             total=total
@@ -235,65 +212,46 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
             #? Descontamos del inventario lo que se acaba de vender
             producto_dao.sumar_existencia(item["id_producto"], -item["cantidad"])
 
-        #? Notificación de venta finalizada
-        snack = ft.SnackBar(
-            content=ft.Text(f"Venta {folio} registrada correctamente. Total: ${total:,.2f}"),
-            bgcolor="#2E7D32",
-        )
-        page.overlay.append(snack)
-        snack.open = True
-        page.update()
+        mostrar_mensaje(f"Venta {folio} registrada correctamente. Total: ${total:,.2f}", ft.Colors.GREEN)
 
         cancelar()
 
-    titulo = ft.Text("Registre una venta", size=30, weight=ft.FontWeight.BOLD, color="#5A1026")
-
+    #? Mismo estilo de botón que el login: bgcolor "#EF82A2", texto negro
     btn_agregar = ft.ElevatedButton(
         "Agregar",
         icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-        width=130,
-        height=40,
-        bgcolor="#E96791",
-        color="#FFFFFF",
+        width=300,
+        height=45,
+        bgcolor="#EF82A2",
+        color="#000000",
         on_click=agregar_producto,
-    )
-
-    btn_cancelar = ft.ElevatedButton(
-        "Cancelar",
-        icon=ft.Icons.CANCEL_OUTLINED,
-        width=130,
-        height=40,
-        bgcolor="#E96791",
-        color="#FFFFFF",
-        on_click=cancelar_formulario
     )
 
     btn_finalizar = ft.ElevatedButton(
         "Finalizar venta",
         icon=ft.Icons.POINT_OF_SALE,
-        width=180,
-        height=40,
-        bgcolor="#C2355F",
-        color="#FFFFFF",
+        width=300,
+        height=50,
+        bgcolor="#EF82A2",
+        color="#000000",
         on_click=finalizar_venta
     )
 
-    fila_1 = ft.Row(
-        controls=[producto, cantidad],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        width=550
+    btn_cancelar = ft.ElevatedButton(
+        "Cancelar",
+        icon=ft.Icons.CANCEL_OUTLINED,
+        width=300,
+        height=45,
+        bgcolor="#EF82A2",
+        color="#000000",
+        on_click=cancelar_formulario
     )
 
-    botones_agregar = ft.Row(
-        controls=[btn_agregar],
-        alignment=ft.MainAxisAlignment.END,
-        width=550
-    )
-
-    carrito_scroll = ft.Column(
+    #? La tabla del carrito, centrada dentro de la tarjeta
+    carrito_scroll = ft.Row(
         controls=[tabla_carrito],
+        alignment=ft.MainAxisAlignment.CENTER,
         scroll=ft.ScrollMode.AUTO,
-        height=180,
     )
 
     totales = ft.Column(
@@ -302,39 +260,58 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
         spacing=4,
     )
 
-    botones = ft.Row(
-        controls=[btn_finalizar, btn_cancelar],
-        alignment=ft.MainAxisAlignment.END,
-        spacing=22,
-        width=550
+    #? Fila superior: producto + cantidad + botón agregar, aprovechando el ancho extra
+    fila_agregar = ft.Row(
+        controls=[producto, cantidad, btn_agregar],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
     )
 
+    fila_botones = ft.Row(
+        controls=[btn_finalizar, btn_cancelar],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
+    )
+
+    #? Tarjeta al estilo login: blanca, borde rosa, radio 15, pero más ancha
+    #? para que las 5 columnas de la tabla del carrito se vean sin recortarse
     formulario = ft.Container(
-        width=650,
-        height=650,
-        border=ft.Border.all(1, "#E5A1B4"),
-        bgcolor="#FDF5F6",
-        padding=25,
         content=ft.Column(
             controls=[
-                titulo,
-                fila_1,
-                botones_agregar,
+                ft.Text(
+                    "Registrar venta",
+                    size=20,
+                    color="#000000",
+                    weight=ft.FontWeight.BOLD,
+                ),
+                fila_agregar,
+                ft.Divider(color="#E5A1B4"),
                 carrito_scroll,
                 ft.Divider(color="#E5A1B4"),
                 totales,
-                ft.Container(expand=True),
-                botones
+                fila_botones,
+                mensaje,
             ],
-            spacing=14,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=16,
+        ),
+        width=850,
+        padding=30,
+        alignment=ft.Alignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+        border_radius=15,
+        border=ft.Border.all(3, "#EF82A2"),
     )
 
-    layout = ft.Container(
-        content=formulario,
+    return ft.Container(
+        content=ft.Column(
+            controls=[formulario],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            scroll=ft.ScrollMode.AUTO,
+        ),
         expand=True,
-        alignment=ft.Alignment.CENTER
+        alignment=ft.Alignment.CENTER,
+        padding=30,
     )
-
-    return layout

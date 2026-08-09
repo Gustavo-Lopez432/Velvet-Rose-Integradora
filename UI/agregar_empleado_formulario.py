@@ -1,5 +1,5 @@
-import flet as ft
 import re
+import flet as ft
 from DAO.empleado_dao import EmpleadoDAO
 from models.empleado import Empleado
 
@@ -17,345 +17,251 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
                 empleado_actual = r
                 break
 
-    #? configuracion de la ventana
     page.title = "Editar empleado" if empleado_actual else "Registrar empleado"
     page.bgcolor = "#F9F3F4"
     page.padding = 0
 
-    #? opciones del dropdown
-    puestos = [
-        "Vendedor",
-        "Administrador",
-    ]
+    puestos = ["Vendedor", "Administrador"]
 
-    #? inputs del formulario
-    ancho_campo = 170
+    ancho_campo = 250
+
+    #? Patrón simple de correo, suficiente para atrapar texto sin formato
+    #? (evita depender de una librería externa)
+    patron_correo = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
     nombre = ft.TextField(
         label="Nombre",
-        hint_text="Ingresa el nombre",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
         value=empleado_actual[1] if empleado_actual else ""
     )
 
     apellidos = ft.TextField(
         label="Apellidos",
-        hint_text="Ingresa los apellidos",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
         value=empleado_actual[2] if empleado_actual else ""
     )
 
     telefono = ft.TextField(
         label="Teléfono",
-        hint_text="Ingresa el teléfono",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
         keyboard_type=ft.KeyboardType.PHONE,
         value=empleado_actual[3] if empleado_actual else ""
     )
 
     correo = ft.TextField(
         label="Correo electrónico",
-        hint_text="ejemplo@correo.com",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
         keyboard_type=ft.KeyboardType.EMAIL,
         value=empleado_actual[4] if empleado_actual else ""
     )
 
     usuario = ft.TextField(
         label="Usuario",
-        hint_text="Ingresa el nombre de usuario",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
         value=empleado_actual[5] if empleado_actual else ""
     )
 
     contrasena = ft.TextField(
         label="Contraseña",
-        hint_text="Ingresa la contraseña",
-        height=60,
-        width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
         password=True,
         can_reveal_password=True,
+        width=ancho_campo,
         value=empleado_actual[6] if empleado_actual else ""
     )
 
     puesto = ft.Dropdown(
         label="Puesto",
-        hint_text="Selecciona un puesto",
-        height=60,
         width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        focused_border_color="#C2355F",
-        border_color="#000000",
-        options=[
-            ft.dropdown.Option(p)
-            for p in puestos
-        ],
+        options=[ft.dropdown.Option(p) for p in puestos],
         value=empleado_actual[7] if empleado_actual else None
     )
 
-    #? Validaciones en tiempo real
-    def validar_nombre(e):
-        if nombre.value and not nombre.value.strip():
-            nombre.error = "Ingresa el nombre"
-        else:
-            nombre.error = None
-        nombre.update()
-
-    def validar_apellidos(e):
-        if apellidos.value and not apellidos.value.strip():
-            apellidos.error = "Ingresa los apellidos"
-        else:
-            apellidos.error = None
-        apellidos.update()
-
-    def validar_telefono(e):
-        valor = telefono.value
-        if valor and not valor.isdigit():
-            telefono.error = "Solo números"
-        elif valor and len(valor) != 10:
-            telefono.error = "Debe tener 10 dígitos"
-        else:
-            telefono.error = None
-        telefono.update()
-
-    def validar_correo(e):
-        valor = correo.value
-        patron = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-        if valor and not re.match(patron, valor):
-            correo.error = "Correo inválido"
-        else:
-            correo.error = None
-        correo.update()
-
-    def validar_usuario(e):
-        if usuario.value and len(usuario.value) < 4:
-            usuario.error = "Mínimo 4 caracteres"
-        else:
-            usuario.error = None
-        usuario.update()
-
-    def validar_contrasena(e):
-        if contrasena.value and len(contrasena.value) < 6:
-            contrasena.error = "Mínimo 6 caracteres"
-        else:
-            contrasena.error = None
-        contrasena.update()
-
-    def validar_puesto(e):
-        puesto.error = None
-        puesto.update()
-
-    nombre.on_change = validar_nombre
-    apellidos.on_change = validar_apellidos
-    telefono.on_change = validar_telefono
-    correo.on_change = validar_correo
-    usuario.on_change = validar_usuario
-    contrasena.on_change = validar_contrasena
-    puesto.on_change = validar_puesto
-
-    #? titulo
-    titulo = ft.Text(
-        "Editar empleado" if empleado_actual else "Registre un empleado",
-        size=30,
-        weight=ft.FontWeight.BOLD,
-        color="#5A1026"
+    mensaje = ft.Text(
+        "",
+        color=ft.Colors.RED,
+        text_align=ft.TextAlign.CENTER,
+        width=ancho_campo,
     )
 
-    #? funciones para agregar/editar empleado y cancelar
+    def limpiar_mensaje(e=None):
+        if mensaje.value:
+            mensaje.value = ""
+            page.update()
+
+    nombre.on_change = limpiar_mensaje
+    apellidos.on_change = limpiar_mensaje
+    telefono.on_change = limpiar_mensaje
+    correo.on_change = limpiar_mensaje
+    usuario.on_change = limpiar_mensaje
+    contrasena.on_change = limpiar_mensaje
+    puesto.on_change = limpiar_mensaje
+
     def cancelar_formulario(e):
         cancelar()
 
     def guardar_empleado(e):
 
-        #? validaciones de los campos
-        if not nombre.value:
-            nombre.error = "Ingresa el nombre"
-            nombre.update()
-            return
+        errores = []
 
-        if not apellidos.value:
-            apellidos.error = "Ingresa los apellidos"
-            apellidos.update()
-            return
+        if not nombre.value or not nombre.value.strip():
+            errores.append("Nombre")
 
-        if not telefono.value:
-            telefono.error = "Ingresa el teléfono"
-            telefono.update()
-            return
+        if not apellidos.value or not apellidos.value.strip():
+            errores.append("Apellidos")
 
-        if not correo.value:
-            correo.error = "Ingresa el correo electrónico"
-            correo.update()
-            return
+        #? Teléfono: solo dígitos (se aceptan espacios/guiones, se limpian antes de validar)
+        telefono_limpio = (telefono.value or "").replace(" ", "").replace("-", "")
+        if not telefono_limpio:
+            errores.append("Teléfono")
+        elif not telefono_limpio.isdigit():
+            errores.append("Teléfono (solo números)")
+        elif len(telefono_limpio) < 10:
+            errores.append("Teléfono (mínimo 10 dígitos)")
 
-        if not usuario.value:
-            usuario.error = "Ingresa el usuario"
-            usuario.update()
-            return
+        if not correo.value or not correo.value.strip():
+            errores.append("Correo")
+        elif not patron_correo.match(correo.value.strip()):
+            errores.append("Correo (formato inválido)")
+
+        if not usuario.value or not usuario.value.strip():
+            errores.append("Usuario")
 
         if not contrasena.value:
-            contrasena.error = "Ingresa la contraseña"
-            contrasena.update()
-            return
+            errores.append("Contraseña")
 
         if not puesto.value:
-            puesto.error = "Selecciona un puesto"
-            puesto.update()
+            errores.append("Puesto")
+
+        if errores:
+            mensaje.value = f"Faltan campos por completar: {', '.join(errores)}"
+            mensaje.color = ft.Colors.RED
+            page.update()
             return
 
-        if empleado_actual:
-            #? modo edición: conservamos el estado que ya tenía
-            empleado = Empleado(
-                id=id_empleado,
-                nombre=nombre.value,
-                apellidos=apellidos.value,
-                telefono=telefono.value,
-                correo=correo.value,
-                usuario=usuario.value,
-                contrasena=contrasena.value,
-                puesto=puesto.value,
-                estado=empleado_actual[8]
-            )
-            empleado_dao.update(empleado)
-            print("Empleado actualizado correctamente")
-        else:
-            #? modo agregar
-            empleado = Empleado(
-                id=None,
-                nombre=nombre.value,
-                apellidos=apellidos.value,
-                telefono=telefono.value,
-                correo=correo.value,
-                usuario=usuario.value,
-                contrasena=contrasena.value,
-                puesto=puesto.value
-            )
-            empleado_dao.insert(empleado)
-            print("Empleado agregado correctamente")
+        try:
+            if empleado_actual:
+                empleado = Empleado(
+                    id=id_empleado,
+                    nombre=nombre.value.strip(),
+                    apellidos=apellidos.value.strip(),
+                    telefono=telefono_limpio,
+                    correo=correo.value.strip(),
+                    usuario=usuario.value.strip(),
+                    contrasena=contrasena.value,
+                    puesto=puesto.value,
+                    estado=empleado_actual[8]
+                )
+                empleado_dao.update(empleado)
+                mensaje.value = f"Empleado '{nombre.value}' actualizado correctamente."
+            else:
+                empleado = Empleado(
+                    id=None,
+                    nombre=nombre.value.strip(),
+                    apellidos=apellidos.value.strip(),
+                    telefono=telefono_limpio,
+                    correo=correo.value.strip(),
+                    usuario=usuario.value.strip(),
+                    contrasena=contrasena.value,
+                    puesto=puesto.value
+                )
+                empleado_dao.insert(empleado)
+                mensaje.value = f"Empleado '{nombre.value}' agregado correctamente."
 
-        cancelar()
+            mensaje.color = ft.Colors.GREEN
+            page.update()
+            cancelar()
 
-    #? botones de guardar y cancelar
+        except Exception:
+            #? Cualquier error inesperado (ej. usuario duplicado en la BD)
+            #? se muestra de forma controlada en vez de tronar la app
+            mensaje.value = "No se pudo guardar el empleado. Verifica que el usuario no esté repetido."
+            mensaje.color = ft.Colors.RED
+            page.update()
+
     btn_agregar = ft.ElevatedButton(
         "Guardar cambios" if empleado_actual else "Agregar",
         icon=ft.Icons.SAVE if empleado_actual else ft.Icons.ADD_CIRCLE_OUTLINE,
-        width=150,
-        height=40,
-        bgcolor="#E96791",
-        color="#FFFFFF",
-        on_click=guardar_empleado
+        bgcolor="#EF82A2",
+        color="#000000",
+        width=ancho_campo,
+        height=45,
+        on_click=guardar_empleado,
     )
 
     btn_cancelar = ft.ElevatedButton(
         "Cancelar",
         icon=ft.Icons.CANCEL_OUTLINED,
-        width=130,
-        height=40,
-        bgcolor="#E96791",
-        color="#FFFFFF",
-        on_click=cancelar_formulario
+        bgcolor="#EF82A2",
+        color="#000000",
+        width=ancho_campo,
+        height=45,
+        on_click=cancelar_formulario,
     )
 
-    #? filas de los campos
+    #? filas de 3 columnas, mismo patrón que el formulario de productos
     fila_1 = ft.Row(
         controls=[nombre, apellidos, telefono],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        width=550
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
     )
 
     fila_2 = ft.Row(
         controls=[correo, usuario, contrasena],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        width=550
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
     )
 
-    fila_puesto = ft.Row(
-        controls=[
-            ft.Container(width=ancho_campo),
-            puesto,
-            ft.Container(width=ancho_campo)
-        ],
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        width=550
+    fila_3 = ft.Row(
+        controls=[puesto],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
     )
 
-    botones = ft.Row(
+    fila_botones = ft.Row(
         controls=[btn_agregar, btn_cancelar],
-        alignment=ft.MainAxisAlignment.END,
-        spacing=22,
-        width=550
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
     )
 
-    #? contenedor principal
+    #? Tarjeta ancha al estilo del formulario de productos: blanca, borde
+    #? rosa, radio 15, campos en filas de 3 columnas
     formulario = ft.Container(
-        width=650,
-        height=500,
-        border=ft.Border.all(1, "#E5A1B4"),
-        bgcolor="#FDF5F6",
-        padding=25,
         content=ft.Column(
             controls=[
-                titulo,
+                ft.Text(
+                    "Editar empleado" if empleado_actual else "Registre un empleado",
+                    size=20,
+                    color="#000000",
+                    weight=ft.FontWeight.BOLD,
+                ),
                 fila_1,
                 fila_2,
-                ft.Container(height=5),
-                fila_puesto,
-                ft.Container(expand=True),
-                botones
+                fila_3,
+                fila_botones,
+                mensaje,
             ],
-            spacing=18,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=16,
+        ),
+        width=850,
+        padding=30,
+        alignment=ft.Alignment.CENTER,
+        bgcolor=ft.Colors.WHITE,
+        border_radius=15,
+        border=ft.Border.all(3, "#EF82A2"),
     )
 
-    layout = ft.Container(
-        content=formulario,
+    return ft.Container(
+        content=ft.Column(
+            controls=[formulario],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            scroll=ft.ScrollMode.AUTO,
+        ),
         expand=True,
-        alignment=ft.Alignment.CENTER
+        alignment=ft.Alignment.CENTER,
+        padding=30,
     )
-
-    return layout

@@ -3,15 +3,21 @@ import flet_charts as fch
 from DAO.dashboard_dao import DashboardDAO
 from datetime import date, datetime
 
-def dashboard_window(page: ft.Page):
+def dashboard_window(page: ft.Page, id_empleado, rol):
+
+    es_admin = rol == "Administrador"
 
     #? creamos intantacia y metodos
     dao = DashboardDAO()
 
-    ventas_hoy = dao.ventas_hoy()
+    if es_admin:
+        ventas_hoy = dao.ventas_hoy()
+        stock_bajo = dao.stock_bajo()
+        total_caja = dao.total_caja()
+    else:
+        ventas_hoy = dao.ventas_hoy_empleado(id_empleado)
+
     productos = dao.total_productos()
-    stock_bajo = dao.stock_bajo()
-    total_caja = dao.total_caja()
     productos_mas_vendidos = dao.productos_mas_vendidos()
 
     #? textos para los targets
@@ -30,14 +36,14 @@ def dashboard_window(page: ft.Page):
     )
 
     txt_stock_bajo = ft.Text(
-        f"{stock_bajo:,.0f}",
+        f"{stock_bajo:,.0f}" if es_admin else "",
         size=20,
         weight=ft.FontWeight.BOLD,
         color="#000000"
     )
 
     txt_total_caja = ft.Text(
-        f"${total_caja:,.2f}",
+        f"${total_caja:,.2f}" if es_admin else "",
         size=20,
         weight=ft.FontWeight.BOLD,
         color="#000000"
@@ -99,7 +105,7 @@ def dashboard_window(page: ft.Page):
     #? funcion para actualizar el estado de la grafica
     def actualizar_resumen():
 
-        datos = dao.resumen_ventas_hoy()
+        datos = dao.resumen_ventas_hoy() if es_admin else dao.resumen_ventas_hoy_empleado(id_empleado)
 
         if not datos:
             contenedor_grafica.content = ft.Column(
@@ -197,155 +203,86 @@ def dashboard_window(page: ft.Page):
     )
 
     #? tarjetas de stats
-    targets = ft.Container(
-        content=ft.Row(
-            controls=[
-                ft.Container(
-                    bgcolor="#D8A7B1",
-                    height=200,
-                    expand=True,
-                    border=ft.Border.all(1, "#5A1026"),
-                    content=ft.Column(
-                        controls=[
-                            ft.Text(
-                                "Ventas de hoy",
-                                color="#5A1026",
-                                weight=ft.FontWeight.BOLD,
-                                size=20
-                            ),
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-
-                            txt_ventas_hoy,
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=12
-                    )
-                ),
-
-                ft.Container(
-                    bgcolor="#D8A7B1",
-                    height=200,
-                    expand=True,
-                    border=ft.Border.all(1, "#5A1026"),
-                    content=ft.Column(
-                        controls=[
-                            ft.Text(
-                                "Productos",
-                                color="#5A1026",
-                                weight=ft.FontWeight.BOLD,
-                                size=20
-                            ),
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-
-                            txt_productos,
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=12
-                    )
-                ),
-
-                ft.Container(
-                    bgcolor="#D8A7B1",
-                    height=200,
-                    expand=True,
-                    border=ft.Border.all(1, "#5A1026"),
-                    content=ft.Column(
-                        controls=[
-                            ft.Text(
-                                "Stock bajo",
-                                color="#5A1026",
-                                weight=ft.FontWeight.BOLD,
-                                size=20
-                            ),
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-
-                            txt_stock_bajo,
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=12
-                    )
-                ),
-
-                ft.Container(
-                    bgcolor="#D8A7B1",
-                    height=200,
-                    expand=True,
-                    border=ft.Border.all(1, "#5A1026"),
-                    content=ft.Column(
-                        controls=[
-                            ft.Text(
-                                "Total en caja",
-                                color="#5A1026",
-                                weight=ft.FontWeight.BOLD,
-                                size=20
-                            ),
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-
-                            txt_total_caja,
-
-                            ft.Container(
-                                width=120,
-                                content=ft.Divider(
-                                    color="#C2355F",
-                                )
-                            ),
-                        ],
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=12
-                    )
-                )
-            ],
-            spacing=20
+    tarjetas = [
+        ft.Container(
+            bgcolor="#D8A7B1",
+            height=200,
+            expand=True,
+            border=ft.Border.all(1, "#5A1026"),
+            content=ft.Column(
+                controls=[
+                    ft.Text("Ventas de hoy" if es_admin else "Mis ventas de hoy", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
+                    ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                    txt_ventas_hoy,
+                    ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=12
+            )
         ),
+
+        ft.Container(
+            bgcolor="#D8A7B1",
+            height=200,
+            expand=True,
+            border=ft.Border.all(1, "#5A1026"),
+            content=ft.Column(
+                controls=[
+                    ft.Text("Productos", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
+                    ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                    txt_productos,
+                    ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER,
+                spacing=12
+            )
+        ),
+    ]
+
+    if es_admin:
+        tarjetas.append(
+            ft.Container(
+                bgcolor="#D8A7B1",
+                height=200,
+                expand=True,
+                border=ft.Border.all(1, "#5A1026"),
+                content=ft.Column(
+                    controls=[
+                        ft.Text("Stock bajo", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
+                        ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                        txt_stock_bajo,
+                        ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=12
+                )
+            )
+        )
+        tarjetas.append(
+            ft.Container(
+                bgcolor="#D8A7B1",
+                height=200,
+                expand=True,
+                border=ft.Border.all(1, "#5A1026"),
+                content=ft.Column(
+                    controls=[
+                        ft.Text("Total en caja", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
+                        ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                        txt_total_caja,
+                        ft.Container(width=120, content=ft.Divider(color="#C2355F")),
+                    ],
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=12
+                )
+            )
+        )
+
+    targets = ft.Container(
+        content=ft.Row(controls=tarjetas, spacing=20),
         padding=5
     )
 

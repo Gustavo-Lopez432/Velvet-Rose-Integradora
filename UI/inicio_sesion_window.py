@@ -1,7 +1,6 @@
 import flet as ft
 from DAO.inicio_sesion_dao import InicioSesionDAO
 
-
 def inicio_sesion_window(page: ft.Page, ir_al_dashboard):
 
     dao = InicioSesionDAO()
@@ -36,18 +35,23 @@ def inicio_sesion_window(page: ft.Page, ir_al_dashboard):
             page.update()
             return
 
-        empleado = dao.validar_usuario(
-            usuario_ingresado,
-            contrasena_ingresada
-        )
+        resultado = dao.validar_usuario(usuario_ingresado, contrasena_ingresada)
 
-        if empleado:
+        if resultado == "INACTIVO":
+            mensaje.value = "Este usuario ha sido desactivado"
+            mensaje.color = ft.Colors.RED
+            page.update()
+            return
+
+        if resultado:
+            id_empleado = resultado[0]
+            rol = resultado[4]
+
             mensaje.value = "Inicio de sesión exitoso"
             mensaje.color = ft.Colors.GREEN
             page.update()
 
-            # Ir al dashboard
-            ir_al_dashboard()
+            ir_al_dashboard(id_empleado, rol)
 
         else:
             mensaje.value = "Usuario o contraseña incorrectos"
