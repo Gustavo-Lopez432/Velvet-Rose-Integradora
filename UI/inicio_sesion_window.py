@@ -11,7 +11,6 @@ def main(page: ft.Page):
     page.bgcolor = "#FFFFFF"
     page.padding = 0
 
-    # HEADER
     header = ft.Container(
         bgcolor="#EF82A2",
         height=100,
@@ -29,7 +28,6 @@ def main(page: ft.Page):
         ),
     )
 
-    # CAMPOS
     usuario = ft.TextField(
         label="Usuario",
         prefix_icon=ft.Icons.PERSON,
@@ -49,11 +47,7 @@ def main(page: ft.Page):
         color=ft.Colors.RED,
     )
 
-
-    # =========================
-    # FUNCIÓN LOGIN
-    # =========================
-
+    #Login
     def iniciar_sesion(e):
 
         user = usuario.value
@@ -71,7 +65,7 @@ def main(page: ft.Page):
 
         page.update()
 
-    # BOTÓN
+    #Boton
     boton = ft.ElevatedButton(
         "Iniciar sesión",
         bgcolor="#EF82A2",
@@ -81,7 +75,6 @@ def main(page: ft.Page):
         on_click=iniciar_sesion,
     )
 
-    # TARJETA DEL LOGIN
     container = ft.Container(
         content=ft.Column(
             controls=[
@@ -109,7 +102,7 @@ def main(page: ft.Page):
         border=ft.Border.all(3, "#EF82A2"),
     )
 
-    # CONTENIDO PRINCIPAL
+    #Contenido principal
     contenido = ft.Container(
         content=ft.Column(
             controls=[
@@ -128,7 +121,7 @@ def main(page: ft.Page):
         expand=True,
         alignment=ft.Alignment.CENTER,
     )
-    # PÁGINA
+
     page.add(
         ft.Column(
             controls=[
