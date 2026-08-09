@@ -2,13 +2,22 @@ import flet as ft
 from DAO.producto_dao import ProductoDAO
 from models.producto import Producto
 
-def productos_window_formulario(page: ft.Page, cancelar):
+def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
 
     #? instancias
     producto_dao = ProductoDAO()
 
+    #? si hay id, buscamos el producto para precargar sus datos (modo edición)
+    producto_actual = None
+    if id_producto is not None:
+        todos = producto_dao.cargar_datos()
+        for p in todos:
+            if p[0] == id_producto:
+                producto_actual = p
+                break
+
     #? configuracion de la ventana
-    page.title = "Registrar producto"
+    page.title = "Editar producto" if producto_actual else "Registrar producto"
     page.bgcolor = "#F9F3F4"
     page.padding = 0
 
@@ -38,7 +47,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         label_style=ft.TextStyle(color="#66727C", size=16),
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
-        border_color="#000000"
+        border_color="#000000",
+        value=producto_actual[1] if producto_actual else ""
     )
 
     nombre = ft.TextField(
@@ -51,7 +61,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         label_style=ft.TextStyle(color="#66727C", size=16),
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
-        border_color="#000000"
+        border_color="#000000",
+        value=producto_actual[2] if producto_actual else ""
     )
 
     precio = ft.TextField(
@@ -65,13 +76,15 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        keyboard_type=ft.KeyboardType.NUMBER
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value=str(producto_actual[7]) if producto_actual else ""
     )
 
-    #? Nuevo campo: cantidad que se está ingresando ahora
+    #? En modo agregar: cuántas piezas entran ahora.
+    #? En modo editar: la existencia actual, editable directamente.
     cantidad = ft.TextField(
-        label="Cantidad",
-        hint_text="Piezas a ingresar",
+        label="Existencia" if producto_actual else "Cantidad",
+        hint_text="0" if producto_actual else "Piezas a ingresar",
         height=60,
         width=ancho_campo,
         text_size=13,
@@ -80,10 +93,10 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        keyboard_type=ft.KeyboardType.NUMBER
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value=str(producto_actual[9]) if producto_actual else ""
     )
 
-    #? Ahora opcionales, con hint indicándolo
     max_stock = ft.TextField(
         label="Máximo en stock (opcional)",
         hint_text="Default: 50",
@@ -95,7 +108,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        keyboard_type=ft.KeyboardType.NUMBER
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value=str(producto_actual[10]) if producto_actual else ""
     )
 
     min_stock = ft.TextField(
@@ -109,7 +123,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        keyboard_type=ft.KeyboardType.NUMBER
+        keyboard_type=ft.KeyboardType.NUMBER,
+        value=str(producto_actual[11]) if producto_actual else ""
     )
 
     imagen = ft.TextField(
@@ -123,6 +138,7 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
+        value=producto_actual[6] if producto_actual and producto_actual[6] else ""
     )
 
     marca = ft.Dropdown(
@@ -136,7 +152,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[ft.dropdown.Option(m) for m in marcas]
+        options=[ft.dropdown.Option(m) for m in marcas],
+        value=producto_actual[3] if producto_actual else None
     )
 
     talla = ft.Dropdown(
@@ -150,7 +167,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[ft.dropdown.Option(t) for t in tallas]
+        options=[ft.dropdown.Option(t) for t in tallas],
+        value=producto_actual[4] if producto_actual else None
     )
 
     color = ft.Dropdown(
@@ -164,7 +182,8 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[ft.dropdown.Option(c) for c in colores]
+        options=[ft.dropdown.Option(c) for c in colores],
+        value=producto_actual[5] if producto_actual else None
     )
 
     proveedor = ft.Dropdown(
@@ -178,17 +197,85 @@ def productos_window_formulario(page: ft.Page, cancelar):
         hint_style=ft.TextStyle(color="#A8B7C4"),
         focused_border_color="#C2355F",
         border_color="#000000",
-        options=[ft.dropdown.Option(p) for p in proveedores]
+        options=[ft.dropdown.Option(p) for p in proveedores],
+        value=producto_actual[8] if producto_actual and producto_actual[8] else None
     )
 
+    #? Validaciones en tiempo real
+    def validar_codigo_barras(e):
+        codigo_barras.error = None
+        codigo_barras.update()
+
+    def validar_nombre(e):
+        nombre.error = None
+        nombre.update()
+
+    def validar_precio(e):
+        valor = precio.value
+        if valor:
+            try:
+                num = float(valor)
+                precio.error = "Debe ser mayor a 0" if num <= 0 else None
+            except ValueError:
+                precio.error = "Precio inválido"
+        else:
+            precio.error = None
+        precio.update()
+
+    def validar_cantidad(e):
+        valor = cantidad.value
+        if valor and not valor.isdigit():
+            cantidad.error = "Solo números"
+        else:
+            cantidad.error = None
+        cantidad.update()
+
+    def validar_max_stock(e):
+        valor = max_stock.value
+        if valor and not valor.isdigit():
+            max_stock.error = "Solo números"
+        else:
+            max_stock.error = None
+        max_stock.update()
+
+    def validar_min_stock(e):
+        valor = min_stock.value
+        if valor and not valor.isdigit():
+            min_stock.error = "Solo números"
+        else:
+            min_stock.error = None
+        min_stock.update()
+
+    def validar_marca(e):
+        marca.error = None
+        marca.update()
+
+    def validar_talla(e):
+        talla.error = None
+        talla.update()
+
+    def validar_color(e):
+        color.error = None
+        color.update()
+
+    codigo_barras.on_change = validar_codigo_barras
+    nombre.on_change = validar_nombre
+    precio.on_change = validar_precio
+    cantidad.on_change = validar_cantidad
+    max_stock.on_change = validar_max_stock
+    min_stock.on_change = validar_min_stock
+    marca.on_change = validar_marca
+    talla.on_change = validar_talla
+    color.on_change = validar_color
+
     titulo = ft.Text(
-        "Registre un producto",
+        "Editar producto" if producto_actual else "Registre un producto",
         size=30,
         weight=ft.FontWeight.BOLD,
         color="#5A1026"
     )
 
-    #? funciones para agregar producto y cancelar
+    #? funciones para agregar/editar producto y cancelar
     def cancelar_formulario(e):
         cancelar()
 
@@ -201,16 +288,74 @@ def productos_window_formulario(page: ft.Page, cancelar):
         snack.open = True
         page.update()
 
-    def agregar_producto(e):
+    def guardar_producto(e):
 
-        #? el código de barras y la cantidad siempre son obligatorios
         if not codigo_barras.value:
-            codigo_barras.error_text = "Ingresa el código de barras"
+            codigo_barras.error = "Ingresa el código de barras"
             codigo_barras.update()
             return
 
-        if not cantidad.value or not cantidad.value.isdigit() or int(cantidad.value) <= 0:
-            cantidad.error_text = "Ingresa una cantidad válida"
+        if not cantidad.value or not cantidad.value.isdigit():
+            cantidad.error = "Ingresa un valor válido"
+            cantidad.update()
+            return
+
+        #? ===================== MODO EDITAR =====================
+        if producto_actual:
+
+            if not nombre.value:
+                nombre.error = "Ingresa el nombre"
+                nombre.update()
+                return
+
+            if not marca.value:
+                marca.error = "Selecciona una marca"
+                marca.update()
+                return
+
+            if not talla.value:
+                talla.error = "Selecciona una talla"
+                talla.update()
+                return
+
+            if not color.value:
+                color.error = "Selecciona un color"
+                color.update()
+                return
+
+            if not precio.value:
+                precio.error = "Ingresa el precio"
+                precio.update()
+                return
+
+            max_stock_valor = int(max_stock.value) if max_stock.value else 50
+            min_stock_valor = int(min_stock.value) if min_stock.value else 5
+            proveedor_valor = proveedor.value if proveedor.value else None
+            imagen_valor = imagen.value if imagen.value else None
+
+            producto = Producto(
+                id=id_producto,
+                codigoBarras=codigo_barras.value,
+                nombre=nombre.value,
+                marca=marca.value,
+                talla=talla.value,
+                color=color.value,
+                imagen=imagen_valor,
+                precio=float(precio.value),
+                proveedor=proveedor_valor,
+                existencia=int(cantidad.value),
+                maxStock=max_stock_valor,
+                minStock=min_stock_valor
+            )
+
+            producto_dao.update(producto)
+            mostrar_mensaje(f"Producto '{nombre.value}' actualizado correctamente.")
+            cancelar()
+            return
+
+        #? ===================== MODO AGREGAR =====================
+        if int(cantidad.value) <= 0:
+            cantidad.error = "Ingresa una cantidad válida"
             cantidad.update()
             return
 
@@ -224,10 +369,10 @@ def productos_window_formulario(page: ft.Page, cancelar):
 
         #? CASO 1: el producto ya existe -> solo sumamos la cantidad a su existencia
         if producto_existente:
-            id_producto = producto_existente[0]
+            id_existente = producto_existente[0]
             nombre_producto = producto_existente[2]
 
-            producto_dao.sumar_existencia(id_producto, int(cantidad.value))
+            producto_dao.sumar_existencia(id_existente, int(cantidad.value))
 
             mostrar_mensaje(
                 f"Se sumaron {cantidad.value} piezas a '{nombre_producto}'. Existencia actualizada."
@@ -237,31 +382,30 @@ def productos_window_formulario(page: ft.Page, cancelar):
 
         #? CASO 2: producto nuevo -> validamos el resto de los campos obligatorios
         if not nombre.value:
-            nombre.error_text = "Ingresa el nombre"
+            nombre.error = "Ingresa el nombre"
             nombre.update()
             return
 
         if not marca.value:
-            marca.error_text = "Selecciona una marca"
+            marca.error = "Selecciona una marca"
             marca.update()
             return
 
         if not talla.value:
-            talla.error_text = "Selecciona una talla"
+            talla.error = "Selecciona una talla"
             talla.update()
             return
 
         if not color.value:
-            color.error_text = "Selecciona un color"
+            color.error = "Selecciona un color"
             color.update()
             return
 
         if not precio.value:
-            precio.error_text = "Ingresa el precio"
+            precio.error = "Ingresa el precio"
             precio.update()
             return
 
-        #? campos opcionales con default
         max_stock_valor = int(max_stock.value) if max_stock.value else 50
         min_stock_valor = int(min_stock.value) if min_stock.value else 5
         proveedor_valor = proveedor.value if proveedor.value else None
@@ -283,19 +427,18 @@ def productos_window_formulario(page: ft.Page, cancelar):
         )
 
         producto_dao.insert(producto)
-
         mostrar_mensaje(f"Producto '{nombre.value}' registrado correctamente.")
         cancelar()
 
-    #? botones de agregar producto y cancelar
+    #? botones de guardar y cancelar
     btn_agregar = ft.ElevatedButton(
-        "Agregar",
-        icon=ft.Icons.ADD_CIRCLE_OUTLINE,
-        width=130,
+        "Guardar cambios" if producto_actual else "Agregar",
+        icon=ft.Icons.SAVE if producto_actual else ft.Icons.ADD_CIRCLE_OUTLINE,
+        width=150,
         height=40,
         bgcolor="#E96791",
         color="#FFFFFF",
-        on_click=agregar_producto
+        on_click=guardar_producto
     )
 
     btn_cancelar = ft.ElevatedButton(

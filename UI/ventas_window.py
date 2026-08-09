@@ -74,6 +74,7 @@ def ventas_window(page: ft.Page, actualizar_vista):
         title=ft.Text("Eliminar venta"),
         content=ft.Text("¿Seguro que quieres eliminar esta venta? Esta acción no se puede deshacer."),
     )
+    page.overlay.append(dialogo_confirmar)
 
     def cerrar_dialogo():
         dialogo_confirmar.open = False
@@ -94,7 +95,6 @@ def ventas_window(page: ft.Page, actualizar_vista):
             ft.TextButton("Eliminar", on_click=eliminar_confirmado),
         ]
         dialogo_confirmar.open = True
-        page.overlay.append(dialogo_confirmar)
         page.update()
 
     #? Función para construir filas a partir de una lista de registros

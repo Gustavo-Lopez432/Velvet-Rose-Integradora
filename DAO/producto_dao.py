@@ -107,11 +107,15 @@ class ProductoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM productos WHERE id = %s', (id,))
-
-        conexion.commit()
-        cursor.close()
-        conexion.close()
+        try:
+            cursor.execute('DELETE FROM productos WHERE id = %s', (id,))
+            conexion.commit()
+        except Exception:
+            conexion.rollback()
+            raise
+        finally:
+            cursor.close()
+            conexion.close()
 
     def obtener_ultimo_id(self):
         conexion = Conexion.obtener_conexion()
@@ -187,10 +191,13 @@ class ProductoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        sql = "UPDATE productos SET existencia = existencia + %s WHERE id = %s"
-
-        cursor.execute(sql, (cantidad, id))
-
-        conexion.commit()
-        cursor.close()
-        conexion.close()
+        try:
+            sql = "UPDATE productos SET existencia = existencia + %s WHERE id = %s"
+            cursor.execute(sql, (cantidad, id))
+            conexion.commit()
+        except Exception:
+            conexion.rollback()
+            raise
+        finally:
+            cursor.close()
+            conexion.close()
