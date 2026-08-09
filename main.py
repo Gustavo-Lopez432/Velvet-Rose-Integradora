@@ -36,7 +36,7 @@ def main(page: ft.Page):
             content=ft.Row(
                 controls=[
                     ft.Image(
-                        src="assets/Logo.png",
+                        src="assets/rosa.png",
                         width=200,
                         height=150,
                     ),
