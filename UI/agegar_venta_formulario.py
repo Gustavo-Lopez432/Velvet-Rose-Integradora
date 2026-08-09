@@ -25,7 +25,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
 
     #? Diccionario id -> {nombre, precio} para acceso rápido
     productos_dict = {
-        str(p[0]): {"nombre": p[2], "precio": float(p[7])}
+        str(p[0]): {"nombre": p[2], "precio": float(p[7]), "existencia": p[9]}
         for p in productos_bd
     }
 
@@ -65,27 +65,23 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
         keyboard_type=ft.KeyboardType.NUMBER
     )
 
-    precio = ft.TextField(
-        label="Precio unitario",
-        hint_text="$0.00",
-        height=60,
-        width=ancho_campo,
-        text_size=13,
-        color="#000000",
-        label_style=ft.TextStyle(color="#66727C", size=16),
-        hint_style=ft.TextStyle(color="#A8B7C4"),
-        border_color="#AEBCC8",
-        focused_border_color="#C2355F",
-        read_only=True
-    )
-
-    #? Autocompletar precio al elegir el producto
+    #? Autocompletar precio al elegir el producto + validación
     def producto_seleccionado(e):
-        datos = productos_dict.get(producto.value)
-        precio.value = f"{datos['precio']:.2f}" if datos else ""
+        producto.error = None
         page.update()
 
+    def validar_cantidad(e):
+        valor = cantidad.value
+        if valor and not valor.isdigit():
+            cantidad.error = "Solo números"
+        elif valor and int(valor) <= 0:
+            cantidad.error = "Debe ser mayor a 0"
+        else:
+            cantidad.error = None
+        cantidad.update()
+
     producto.on_change = producto_seleccionado
+    cantidad.on_change = validar_cantidad
 
     #? Tabla del carrito
     tabla_carrito = ft.DataTable(
@@ -148,17 +144,17 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
     #? Agrega el producto seleccionado al carrito
     def agregar_producto(e):
         if not producto.value:
-            producto.error_text = "Selecciona un producto"
+            producto.error = "Selecciona un producto"
             producto.update()
             return
 
         if not cantidad.value or not cantidad.value.isdigit() or int(cantidad.value) <= 0:
-            cantidad.error_text = "Ingresa una cantidad válida"
+            cantidad.error = "Ingresa una cantidad válida"
             cantidad.update()
             return
 
-        producto.error_text = None
-        cantidad.error_text = None
+        producto.error = None
+        cantidad.error = None
 
         datos = productos_dict.get(producto.value)
         if not datos:
@@ -166,6 +162,19 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
 
         cant = int(cantidad.value)
         precio_unit = datos["precio"]
+
+        #? Cuánto ya está en el carrito de este mismo producto (si se agregó antes)
+        cantidad_en_carrito = sum(
+            item["cantidad"] for item in carrito
+            if item["id_producto"] == producto.value
+        )
+
+        cantidad_disponible = datos["existencia"] - cantidad_en_carrito
+
+        if cant > cantidad_disponible:
+            cantidad.error = f"Solo hay {cantidad_disponible} piezas disponibles"
+            cantidad.update()
+            return
 
         carrito.append({
             "id_producto": producto.value,
@@ -180,7 +189,6 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
 
         producto.value = None
         cantidad.value = ""
-        precio.value = ""
 
         page.update()
 
@@ -197,11 +205,12 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
         subtotal = sum(item["subtotal"] for item in carrito)
         iva = subtotal * 0.16
         total = subtotal + iva
+        folio = f"V-{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
         venta = Venta(
             id=None,
             fecha=datetime.now(),
-            folio=f"V-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+            folio=folio,
             idEmpleado=id_empleado_actual,
             subtotal=subtotal,
             iva=iva,
@@ -223,7 +232,17 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
             )
             detalle_venta_dao.insert(detalle)
 
-        print("Venta registrada correctamente")
+            #? Descontamos del inventario lo que se acaba de vender
+            producto_dao.sumar_existencia(item["id_producto"], -item["cantidad"])
+
+        #? Notificación de venta finalizada
+        snack = ft.SnackBar(
+            content=ft.Text(f"Venta {folio} registrada correctamente. Total: ${total:,.2f}"),
+            bgcolor="#2E7D32",
+        )
+        page.overlay.append(snack)
+        snack.open = True
+        page.update()
 
         cancelar()
 
@@ -254,13 +273,13 @@ def agregar_venta_formulario(page: ft.Page, cancelar):
         icon=ft.Icons.POINT_OF_SALE,
         width=180,
         height=40,
-        bgcolor="#5A1026",
+        bgcolor="#C2355F",
         color="#FFFFFF",
         on_click=finalizar_venta
     )
 
     fila_1 = ft.Row(
-        controls=[producto, cantidad, precio],
+        controls=[producto, cantidad],
         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         width=550
     )

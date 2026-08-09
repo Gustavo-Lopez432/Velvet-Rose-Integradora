@@ -43,7 +43,9 @@ def dashboard_window(page: ft.Page):
         color="#000000"
     )
 
-    #? productos mas vendidos
+   #? productos mas vendidos
+    filas_productos = []
+
     if productos_mas_vendidos:
 
         max_ventas = float(productos_mas_vendidos[0][2])
@@ -57,29 +59,14 @@ def dashboard_window(page: ft.Page):
 
             productos_porcentaje.append((nombre, imagen, ventas, porcentaje))
 
-        #? Crear filas de la tabla
-        filas_productos = []
-
         for nombre, imagen, ventas, porcentaje in productos_porcentaje:
 
             filas_productos.append(
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(
-                            ft.Text(str(imagen), color="#000")
-                        ),
-
-                        ft.DataCell(
-                            ft.Text(nombre, color="#000")
-                        ),
-
-                        ft.DataCell(
-                            ft.Container(
-                                content=ft.Text(str(int(ventas)), color="#000"),
-                                alignment=ft.Alignment.CENTER,
-                                width=120,
-                            )
-                        ),
+                        ft.DataCell(ft.Text(str(imagen), color="#000")),
+                        ft.DataCell(ft.Text(nombre, color="#000")),
+                        ft.DataCell(ft.Text(str(int(ventas)), color="#000")),
                     ],
                 )
             )

@@ -1,4 +1,5 @@
 import flet as ft
+import re
 from DAO.empleado_dao import EmpleadoDAO
 from models.empleado import Empleado
 
@@ -136,6 +137,66 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
         value=empleado_actual[7] if empleado_actual else None
     )
 
+    #? Validaciones en tiempo real
+    def validar_nombre(e):
+        if nombre.value and not nombre.value.strip():
+            nombre.error = "Ingresa el nombre"
+        else:
+            nombre.error = None
+        nombre.update()
+
+    def validar_apellidos(e):
+        if apellidos.value and not apellidos.value.strip():
+            apellidos.error = "Ingresa los apellidos"
+        else:
+            apellidos.error = None
+        apellidos.update()
+
+    def validar_telefono(e):
+        valor = telefono.value
+        if valor and not valor.isdigit():
+            telefono.error = "Solo números"
+        elif valor and len(valor) != 10:
+            telefono.error = "Debe tener 10 dígitos"
+        else:
+            telefono.error = None
+        telefono.update()
+
+    def validar_correo(e):
+        valor = correo.value
+        patron = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        if valor and not re.match(patron, valor):
+            correo.error = "Correo inválido"
+        else:
+            correo.error = None
+        correo.update()
+
+    def validar_usuario(e):
+        if usuario.value and len(usuario.value) < 4:
+            usuario.error = "Mínimo 4 caracteres"
+        else:
+            usuario.error = None
+        usuario.update()
+
+    def validar_contrasena(e):
+        if contrasena.value and len(contrasena.value) < 6:
+            contrasena.error = "Mínimo 6 caracteres"
+        else:
+            contrasena.error = None
+        contrasena.update()
+
+    def validar_puesto(e):
+        puesto.error = None
+        puesto.update()
+
+    nombre.on_change = validar_nombre
+    apellidos.on_change = validar_apellidos
+    telefono.on_change = validar_telefono
+    correo.on_change = validar_correo
+    usuario.on_change = validar_usuario
+    contrasena.on_change = validar_contrasena
+    puesto.on_change = validar_puesto
+
     #? titulo
     titulo = ft.Text(
         "Editar empleado" if empleado_actual else "Registre un empleado",
@@ -152,37 +213,37 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
 
         #? validaciones de los campos
         if not nombre.value:
-            nombre.error_text = "Ingresa el nombre"
+            nombre.error = "Ingresa el nombre"
             nombre.update()
             return
 
         if not apellidos.value:
-            apellidos.error_text = "Ingresa los apellidos"
+            apellidos.error = "Ingresa los apellidos"
             apellidos.update()
             return
 
         if not telefono.value:
-            telefono.error_text = "Ingresa el teléfono"
+            telefono.error = "Ingresa el teléfono"
             telefono.update()
             return
 
         if not correo.value:
-            correo.error_text = "Ingresa el correo electrónico"
+            correo.error = "Ingresa el correo electrónico"
             correo.update()
             return
 
         if not usuario.value:
-            usuario.error_text = "Ingresa el usuario"
+            usuario.error = "Ingresa el usuario"
             usuario.update()
             return
 
         if not contrasena.value:
-            contrasena.error_text = "Ingresa la contraseña"
+            contrasena.error = "Ingresa la contraseña"
             contrasena.update()
             return
 
         if not puesto.value:
-            puesto.error_text = "Selecciona un puesto"
+            puesto.error = "Selecciona un puesto"
             puesto.update()
             return
 
