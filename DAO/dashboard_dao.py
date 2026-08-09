@@ -123,3 +123,67 @@ class DashboardDAO:
         conexion.close()
     
         return datos
+
+    #? Ventas de hoy de un empleado específico
+    def ventas_hoy_empleado(self, id_empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT COALESCE(SUM(total), 0)
+            FROM ventas
+            WHERE DATE(fecha) = CURRENT_DATE
+            AND id_empleado = %s
+        """
+
+        cursor.execute(sql, (id_empleado,))
+        total = cursor.fetchone()[0]
+
+        cursor.close()
+        conexion.close()
+
+        return total
+
+    #? Número de ventas (tickets) que hizo un empleado hoy
+    def numero_ventas_hoy_empleado(self, id_empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT COUNT(*)
+            FROM ventas
+            WHERE DATE(fecha) = CURRENT_DATE
+            AND id_empleado = %s
+        """
+
+        cursor.execute(sql, (id_empleado,))
+        total = cursor.fetchone()[0]
+
+        cursor.close()
+        conexion.close()
+
+        return total
+
+    #? Resumen de ventas de hoy de un empleado específico (para la gráfica)
+    def resumen_ventas_hoy_empleado(self, id_empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT
+                fecha,
+                total
+            FROM ventas
+            WHERE DATE(fecha) = CURRENT_DATE
+            AND id_empleado = %s
+            ORDER BY fecha
+        """
+
+        cursor.execute(sql, (id_empleado,))
+
+        datos = cursor.fetchall()
+
+        cursor.close()
+        conexion.close()
+
+        return datos

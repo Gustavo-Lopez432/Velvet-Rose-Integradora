@@ -1,24 +1,34 @@
 from database.conexion import Conexion
-from models.empleado import Empleado
 
 class InicioSesionDAO:
-    
+
     def validar_usuario(self, usuario, contrasena):
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute(
-            '''
-            SELECT usuario, contrasena
-            FROM empleados
-            WHERE usuario = %s AND contrasena = %s
-            ''',
-            (usuario, contrasena)
-        )
+        try:
+            cursor.execute(
+                '''
+                SELECT id, nombre, apellidos, usuario, puesto, estado
+                FROM empleados
+                WHERE usuario = %s AND contrasena = %s
+                ''',
+                (usuario, contrasena)
+            )
 
-        registro = cursor.fetchone()
+            registro = cursor.fetchone()
 
-        cursor.close()
-        conexion.close()
+            if registro is None:
+                return None
 
-        return registro
+            if registro[5] != "Activo":
+                return "INACTIVO"
+
+            return registro
+
+        except Exception:
+            conexion.rollback()
+            raise
+        finally:
+            cursor.close()
+            conexion.close()

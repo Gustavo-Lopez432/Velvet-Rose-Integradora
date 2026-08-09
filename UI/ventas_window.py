@@ -3,7 +3,7 @@ from DAO.venta_dao import VentaDAO
 from UI.agegar_venta_formulario import agregar_venta_formulario
 from DAO.detalle_venta_dao import DetalleVentaDAO
 
-def ventas_window(page: ft.Page, actualizar_vista):
+def ventas_window(page: ft.Page, actualizar_vista, id_empleado):
 
     #? Instancia del DAO
     venta_dao = VentaDAO()
@@ -170,8 +170,9 @@ def ventas_window(page: ft.Page, actualizar_vista):
                 agregar_venta_formulario(
                     page,
                     lambda: actualizar_vista(
-                        ventas_window(page, actualizar_vista)
-                    )
+                        ventas_window(page, actualizar_vista, id_empleado)
+                    ),
+                    id_empleado
                 )
             )
         ),

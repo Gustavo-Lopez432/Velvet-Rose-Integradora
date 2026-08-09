@@ -22,13 +22,22 @@ def main(page: ft.Page):
         expand=True
     )
 
+    #? Guardamos aquí el id del empleado que inició sesión.
+    #? Usamos un diccionario para poder modificarlo desde funciones internas.
+    sesion = {"id_empleado": None, "rol": None}
+
     def actualizar_vista(vista):
         contenido.content = vista
         page.update()
 
-    def mostrar_dashboard():
+    def mostrar_dashboard(id_empleado, rol):
 
-        # Header
+        sesion["id_empleado"] = id_empleado
+        sesion["rol"] = rol
+
+        es_admin = rol == "Administrador"
+
+        #? Header
         header = ft.Container(
             bgcolor="#EF82A2",
             height=100,
@@ -93,7 +102,7 @@ def main(page: ft.Page):
                         width=180,
                         on_click=lambda e:
                             actualizar_vista(
-                                dashboard_window(page)
+                                dashboard_window(page, sesion["id_empleado"], sesion["rol"])
                             ),
                         style=ft.ButtonStyle(
                             text_style=ft.TextStyle(
@@ -111,7 +120,8 @@ def main(page: ft.Page):
                             actualizar_vista(
                                 ventas_window(
                                     page,
-                                    actualizar_vista
+                                    actualizar_vista,
+                                    sesion["id_empleado"]
                                 )
                             ),
                         style=ft.ButtonStyle(
@@ -145,6 +155,7 @@ def main(page: ft.Page):
                         bgcolor="#EF82A2",
                         color="#000000",
                         width=180,
+                        disabled=not es_admin,
                         on_click=lambda e:
                             actualizar_vista(
                                 empleados_window(
@@ -185,6 +196,7 @@ def main(page: ft.Page):
                         bgcolor="#EF82A2",
                         color="#000000",
                         width=180,
+                        disabled=not es_admin,
                         style=ft.ButtonStyle(
                             text_style=ft.TextStyle(
                                 weight=ft.FontWeight.BOLD
@@ -219,7 +231,7 @@ def main(page: ft.Page):
         )
 
         actualizar_vista(
-            dashboard_window(page)
+            dashboard_window(page, sesion["id_empleado"], sesion["rol"])
         )
 
     def mostrar_login():
