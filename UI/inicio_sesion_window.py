@@ -1,32 +1,10 @@
 import flet as ft
+from DAO.inicio_sesion_dao import InicioSesionDAO
 
 
-def main(page: ft.Page):
+def inicio_sesion_window(page: ft.Page, ir_al_dashboard):
 
-    page.theme = ft.Theme(
-        font_family="Dinsical"
-    )
-
-    page.title = "Velvet Rose - Inicio de sesión"
-    page.bgcolor = "#FFFFFF"
-    page.padding = 0
-
-    header = ft.Container(
-        bgcolor="#EF82A2",
-        height=100,
-        padding=20,
-        content=ft.Row(
-            controls=[
-                ft.Text(
-                    "BIENVENIDO!!",
-                    size=30,
-                    color="#FFFFFF",
-                    weight=ft.FontWeight.BOLD,
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        ),
-    )
+    dao = InicioSesionDAO()
 
     usuario = ft.TextField(
         label="Usuario",
@@ -47,25 +25,35 @@ def main(page: ft.Page):
         color=ft.Colors.RED,
     )
 
-    #Login
     def iniciar_sesion(e):
 
-        user = usuario.value
-        password = contrasena.value
+        usuario_ingresado = usuario.value
+        contrasena_ingresada = contrasena.value
 
-        if user == "admin" and password == "1234":
+        if not usuario_ingresado or not contrasena_ingresada:
+            mensaje.value = "Completa todos los campos"
+            mensaje.color = ft.Colors.RED
+            page.update()
+            return
 
+        empleado = dao.validar_usuario(
+            usuario_ingresado,
+            contrasena_ingresada
+        )
+
+        if empleado:
             mensaje.value = "Inicio de sesión exitoso"
             mensaje.color = ft.Colors.GREEN
+            page.update()
+
+            # Ir al dashboard
+            ir_al_dashboard()
 
         else:
-
             mensaje.value = "Usuario o contraseña incorrectos"
             mensaje.color = ft.Colors.RED
+            page.update()
 
-        page.update()
-
-    #Boton
     boton = ft.ElevatedButton(
         "Iniciar sesión",
         bgcolor="#EF82A2",
@@ -75,7 +63,7 @@ def main(page: ft.Page):
         on_click=iniciar_sesion,
     )
 
-    container = ft.Container(
+    formulario = ft.Container(
         content=ft.Column(
             controls=[
                 ft.Text(
@@ -95,15 +83,14 @@ def main(page: ft.Page):
         ),
 
         width=400,
-        padding=0,
+        padding=30,
         alignment=ft.Alignment.CENTER,
         bgcolor=ft.Colors.WHITE,
         border_radius=15,
         border=ft.Border.all(3, "#EF82A2"),
     )
 
-    #Contenido principal
-    contenido = ft.Container(
+    return ft.Container(
         content=ft.Column(
             controls=[
                 ft.Image(
@@ -111,27 +98,11 @@ def main(page: ft.Page):
                     width=300,
                     height=250,
                 ),
-
-                container,
+                formulario,
             ],
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=20,
         ),
-
         expand=True,
         alignment=ft.Alignment.CENTER,
     )
-
-    page.add(
-        ft.Column(
-            controls=[
-                header,
-                contenido,
-            ],
-            spacing=0,
-            expand=True,
-        )
-    )
-
-
-ft.app(target=main)
