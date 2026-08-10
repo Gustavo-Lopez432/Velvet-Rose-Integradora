@@ -232,6 +232,25 @@ def main(page: ft.Page):
         botones_menu["corte_caja"] = boton_corte_caja
         botones_menu["reportes"] = boton_reportes
 
+        def cerrar_sesion(e):
+            sesion["id_empleado"] = None
+            sesion["rol"] = None
+            mostrar_login()
+
+        boton_cerrar_sesion = ft.ElevatedButton(
+            "Cerrar sesión",
+            icon=ft.Icons.LOGOUT,
+            bgcolor="#C62828",
+            color="#FFFFFF",
+            width=180,
+            on_click=cerrar_sesion,
+            style=ft.ButtonStyle(
+                text_style=ft.TextStyle(
+                    weight=ft.FontWeight.BOLD
+                )
+            )
+        )
+
         sideBar = ft.Container(
             width=220,
             bgcolor="#EF82A2",
@@ -239,35 +258,45 @@ def main(page: ft.Page):
 
             content=ft.Column(
                 controls=[
+                    ft.Column(
+                        controls=[
+                            ft.Text(
+                                "Módulos principales",
+                                size=16,
+                                color="#000000",
+                                weight=ft.FontWeight.BOLD
+                            ),
 
-                    ft.Text(
-                        "Módulos principales",
-                        size=16,
-                        color="#000000",
-                        weight=ft.FontWeight.BOLD
+                            ft.Divider(color="#000000"),
+
+                            boton_dashboard,
+                            boton_ventas,
+                            boton_productos,
+                            boton_empleados,
+
+                            ft.Divider(color="#000000"),
+
+                            ft.Text(
+                                "Operaciones",
+                                size=16,
+                                color="#000000",
+                                weight=ft.FontWeight.BOLD
+                            ),
+
+                            boton_corte_caja,
+                            boton_reportes,
+                        ],
+
+                        spacing=15
                     ),
 
-                    ft.Divider(color="#000000"),
-
-                    boton_dashboard,
-                    boton_ventas,
-                    boton_productos,
-                    boton_empleados,
-
-                    ft.Divider(color="#000000"),
-
-                    ft.Text(
-                        "Operaciones",
-                        size=16,
-                        color="#000000",
-                        weight=ft.FontWeight.BOLD
-                    ),
-
-                    boton_corte_caja,
-                    boton_reportes,
+                    boton_cerrar_sesion,
                 ],
 
-                spacing=15
+                spacing=15,
+                expand=True,
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             )
         )
 
@@ -283,7 +312,8 @@ def main(page: ft.Page):
                             sideBar,
                             contenido
                         ],
-                        expand=True
+                        expand=True,
+                        vertical_alignment=ft.CrossAxisAlignment.STRETCH,
                     )
                 ],
 
