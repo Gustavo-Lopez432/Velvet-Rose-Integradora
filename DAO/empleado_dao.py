@@ -92,11 +92,15 @@ class EmpleadoDAO:
         conexion = Conexion.obtener_conexion()
         cursor = conexion.cursor()
 
-        cursor.execute('DELETE FROM empleados WHERE id = %s', (id,))
-
-        conexion.commit()
-        cursor.close()
-        conexion.close()
+        try:
+            cursor.execute('DELETE FROM empleados WHERE id = %s', (id,))
+            conexion.commit()
+        except Exception:
+            conexion.rollback()
+            raise
+        finally:
+            cursor.close()
+            conexion.close()
 
     def cambiar_estado(self, id, nuevo_estado):
         conexion = Conexion.obtener_conexion()
@@ -104,11 +108,15 @@ class EmpleadoDAO:
 
         sql = "UPDATE empleados SET estado = %s WHERE id = %s"
 
-        cursor.execute(sql, (nuevo_estado, id))
-
-        conexion.commit()
-        cursor.close()
-        conexion.close()
+        try:
+            cursor.execute(sql, (nuevo_estado, id))
+            conexion.commit()
+        except Exception:
+            conexion.rollback()
+            raise
+        finally:
+            cursor.close()
+            conexion.close()
 
     def obtener_ultimo_id(self):
         conexion = Conexion.obtener_conexion()

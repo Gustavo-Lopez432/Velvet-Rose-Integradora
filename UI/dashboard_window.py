@@ -70,7 +70,15 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
             filas_productos.append(
                 ft.DataRow(
                     cells=[
-                        ft.DataCell(ft.Text(str(imagen), color="#000")),
+                        ft.DataCell(
+                            ft.Image(
+                                src=imagen,
+                                width=45,
+                                height=45,
+                                fit=ft.BoxFit.COVER,
+                                border_radius=6,
+                            ) if imagen else ft.Icon(ft.Icons.IMAGE_NOT_SUPPORTED, color="#CCCCCC")
+                        ),
                         ft.DataCell(ft.Text(nombre, color="#000")),
                         ft.DataCell(ft.Text(str(int(ventas)), color="#000")),
                     ],

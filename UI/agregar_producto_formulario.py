@@ -119,10 +119,44 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
 
     imagen = ft.TextField(
         label="Imagen (opcional)",
-        hint_text="Seleccione imagen",
+        hint_text="Ninguna imagen seleccionada",
         width=ancho_campo,
         value=producto_actual[6] if producto_actual and producto_actual[6] else "",
+        read_only=True,
         on_change=limpiar_mensaje,
+    )
+
+    imagen_preview = ft.Image(
+        src=producto_actual[6] if producto_actual and producto_actual[6] else "",
+        width=80,
+        height=80,
+        fit=ft.BoxFit.COVER,
+        border_radius=8,
+        visible=bool(producto_actual and producto_actual[6]),
+    )
+
+    file_picker = ft.FilePicker()
+    page.services.append(file_picker)   # ✅ ahora es un "service"
+
+    async def al_seleccionar_imagen(e):
+        files = await file_picker.pick_files(
+            allow_multiple=False,
+            allowed_extensions=["png", "jpg", "jpeg", "webp"],
+        )
+        if files:
+            ruta = files[0].path
+            imagen.value = ruta
+            imagen_preview.src = ruta
+            imagen_preview.visible = True
+            limpiar_mensaje()
+            page.update()
+
+    btn_seleccionar_imagen = ft.ElevatedButton(
+        "Seleccionar imagen",
+        icon=ft.Icons.IMAGE_OUTLINED,
+        bgcolor="#EF82A2",
+        color="#000000",
+        on_click=al_seleccionar_imagen,
     )
 
     marca = ft.Dropdown(
@@ -325,8 +359,15 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
         wrap=True,
     )
 
+    fila_imagen = ft.Row(
+        controls=[imagen, btn_seleccionar_imagen, imagen_preview],
+        alignment=ft.MainAxisAlignment.CENTER,
+        spacing=16,
+        wrap=True,
+    )
+
     fila_proveedor = ft.Row(
-        controls=[imagen, proveedor],
+        controls=[proveedor],
         alignment=ft.MainAxisAlignment.CENTER,
         spacing=16,
         wrap=True,
@@ -348,6 +389,7 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
                 fila_1,
                 fila_2,
                 fila_dropdowns,
+                fila_imagen,
                 fila_proveedor,
                 fila_botones,
                 mensaje,
