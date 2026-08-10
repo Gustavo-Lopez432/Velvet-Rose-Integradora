@@ -7,7 +7,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
 
     es_admin = rol == "Administrador"
 
-    #? creamos intantacia y metodos
+    #? creamos instancia y métodos
     dao = DashboardDAO()
 
     if es_admin:
@@ -49,7 +49,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
         color="#000000"
     )
 
-   #? productos mas vendidos
+    #? productos mas vendidos
     filas_productos = []
 
     if productos_mas_vendidos:
@@ -219,6 +219,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
             border=ft.Border.all(1, "#5A1026"),
             content=ft.Column(
                 controls=[
+                    ft.Icon(ft.Icons.PAID, color="#5A1026", size=28),
                     ft.Text("Ventas de hoy" if es_admin else "Mis ventas de hoy", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
                     ft.Container(width=120, content=ft.Divider(color="#C2355F")),
                     txt_ventas_hoy,
@@ -237,6 +238,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
             border=ft.Border.all(1, "#5A1026"),
             content=ft.Column(
                 controls=[
+                    ft.Icon(ft.Icons.INVENTORY_2, color="#5A1026", size=28),
                     ft.Text("Productos", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
                     ft.Container(width=120, content=ft.Divider(color="#C2355F")),
                     txt_productos,
@@ -258,6 +260,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
                 border=ft.Border.all(1, "#5A1026"),
                 content=ft.Column(
                     controls=[
+                        ft.Icon(ft.Icons.WARNING_AMBER, color="#5A1026", size=28),
                         ft.Text("Stock bajo", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
                         ft.Container(width=120, content=ft.Divider(color="#C2355F")),
                         txt_stock_bajo,
@@ -277,6 +280,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
                 border=ft.Border.all(1, "#5A1026"),
                 content=ft.Column(
                     controls=[
+                        ft.Icon(ft.Icons.ACCOUNT_BALANCE_WALLET, color="#5A1026", size=28),
                         ft.Text("Total en caja", color="#5A1026", weight=ft.FontWeight.BOLD, size=20),
                         ft.Container(width=120, content=ft.Divider(color="#C2355F")),
                         txt_total_caja,
@@ -311,37 +315,49 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
                         controls=[
 
                             #? Título
-                            ft.Text(
-                                "Productos más vendidos",
-                                color="#5A1026",
-                                weight=ft.FontWeight.BOLD,
-                                size=20,
+                            ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.TRENDING_UP, color="#5A1026", size=24),
+                                    ft.Text(
+                                        "Productos más vendidos",
+                                        color="#5A1026",
+                                        weight=ft.FontWeight.BOLD,
+                                        size=20,
+                                    ),
+                                ],
+                                spacing=8,
                             ),
 
                             #? Tabla
                             ft.DataTable(
                                 columns=[
                                     ft.DataColumn(
-                                        ft.Text(
-                                            "Imagen",
-                                            color="#FFFFFF",
-                                            weight=ft.FontWeight.BOLD,
+                                        ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.IMAGE, color="#FFFFFF", size=18),
+                                                ft.Text("Imagen", color="#FFFFFF", weight=ft.FontWeight.BOLD),
+                                            ],
+                                            spacing=6,
                                         )
                                     ),
 
                                     ft.DataColumn(
-                                        ft.Text(
-                                            "Nombre",
-                                            color="#FFFFFF",
-                                            weight=ft.FontWeight.BOLD,
+                                        ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.LABEL, color="#FFFFFF", size=18),
+                                                ft.Text("Nombre", color="#FFFFFF", weight=ft.FontWeight.BOLD),
+                                            ],
+                                            spacing=6,
                                         )
                                     ),
 
                                     ft.DataColumn(
-                                        ft.Text(
-                                            "Piezas vendidas",
-                                            color="#FFFFFF",
-                                            weight=ft.FontWeight.BOLD,
+                                        ft.Row(
+                                            controls=[
+                                                ft.Icon(ft.Icons.SHOPPING_BAG, color="#FFFFFF", size=18),
+                                                ft.Text("Piezas vendidas", color="#FFFFFF", weight=ft.FontWeight.BOLD),
+                                            ],
+                                            spacing=6,
                                         )
                                     ),
                                 ],
@@ -363,10 +379,10 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
                     content=ft.Column(
                         controls=[
 
-                            #? Título y dropdown
+                            #? Título
                             ft.Row(
                                 controls=[
-
+                                    ft.Icon(ft.Icons.SHOW_CHART, color="#5A1026", size=24),
                                     ft.Text(
                                         "Resumen de ventas",
                                         color="#5A1026",
@@ -374,8 +390,7 @@ def dashboard_window(page: ft.Page, id_empleado, rol):
                                         size=20,
                                     ),
                                 ],
-
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                spacing=8,
                             ),
 
                             #? Gráfica

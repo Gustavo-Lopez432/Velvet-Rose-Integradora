@@ -45,13 +45,14 @@ def inicio_sesion_window(page: ft.Page, ir_al_dashboard):
 
         if resultado:
             id_empleado = resultado[0]
+            nombre = resultado[1]
             rol = resultado[4]
 
             mensaje.value = "Inicio de sesión exitoso"
             mensaje.color = ft.Colors.GREEN
             page.update()
 
-            ir_al_dashboard(id_empleado, rol)
+            ir_al_dashboard(id_empleado, nombre, rol)
 
         else:
             mensaje.value = "Usuario o contraseña incorrectos"

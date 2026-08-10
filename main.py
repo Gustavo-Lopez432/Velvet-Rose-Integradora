@@ -24,17 +24,17 @@ def main(page: ft.Page):
         expand=True
     )
 
-    #? Guardamos aquí el id del empleado que inició sesión.
-    #? Usamos un diccionario para poder modificarlo desde funciones internas.
-    sesion = {"id_empleado": None, "rol": None}
+    #? Guardamos aquí los datos del empleado que inició sesión.
+    sesion = {"id_empleado": None, "nombre": None, "rol": None}
 
     def actualizar_vista(vista):
         contenido.content = vista
         page.update()
 
-    def mostrar_dashboard(id_empleado, rol):
+    def mostrar_dashboard(id_empleado, nombre, rol):
 
         sesion["id_empleado"] = id_empleado
+        sesion["nombre"] = nombre
         sesion["rol"] = rol
 
         es_admin = rol == "Administrador"
@@ -59,7 +59,11 @@ def main(page: ft.Page):
                         weight=ft.FontWeight.BOLD,
                     ),
 
-                    ft.ElevatedButton(
+                    #? Texto informativo, ya no es un botón clicable
+                    ft.Container(
+                        padding=ft.Padding.symmetric(horizontal=15, vertical=8),
+                        border_radius=8,
+                        bgcolor="#C2355F",
                         content=ft.Row(
                             controls=[
                                 ft.Icon(
@@ -67,13 +71,13 @@ def main(page: ft.Page):
                                     color="#FFFFFF"
                                 ),
                                 ft.Text(
-                                    "Bienvenido",
-                                    color="#FFFFFF"
+                                    f"Bienvenido, {sesion['nombre']}",
+                                    color="#FFFFFF",
+                                    weight=ft.FontWeight.BOLD,
                                 )
                             ],
-                            spacing=5
+                            spacing=8
                         ),
-                        bgcolor="#EF82A2"
                     )
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN
@@ -86,13 +90,11 @@ def main(page: ft.Page):
         COLOR_NORMAL_BG = "#EF82A2"
         COLOR_NORMAL_TEXTO = "#000000"
 
-        #? Diccionario para poder recorrer todos los botones del menú y
-        #? resetear sus colores antes de marcar el activo
         botones_menu = {}
 
-        def marcar_activo(nombre):
+        def marcar_activo(nombre_boton):
             for clave, boton in botones_menu.items():
-                if clave == nombre:
+                if clave == nombre_boton:
                     boton.bgcolor = COLOR_ACTIVO_BG
                     boton.color = COLOR_ACTIVO_TEXTO
                 else:
@@ -100,12 +102,13 @@ def main(page: ft.Page):
                     boton.color = COLOR_NORMAL_TEXTO
             page.update()
 
-        def ir_a(nombre, vista):
-            marcar_activo(nombre)
+        def ir_a(nombre_boton, vista):
+            marcar_activo(nombre_boton)
             actualizar_vista(vista)
 
         boton_dashboard = ft.ElevatedButton(
             "Dashboard",
+            icon=ft.Icons.DASHBOARD,
             bgcolor="#C2355F",
             color="#FFFFFF",
             width=180,
@@ -123,6 +126,7 @@ def main(page: ft.Page):
 
         boton_ventas = ft.ElevatedButton(
             "Ventas",
+            icon=ft.Icons.POINT_OF_SALE,
             bgcolor="#EF82A2",
             color="#000000",
             width=180,
@@ -144,6 +148,7 @@ def main(page: ft.Page):
 
         boton_productos = ft.ElevatedButton(
             "Productos",
+            icon=ft.Icons.INVENTORY_2,
             bgcolor="#EF82A2",
             color="#000000",
             width=180,
@@ -164,6 +169,7 @@ def main(page: ft.Page):
 
         boton_empleados = ft.ElevatedButton(
             "Empleados",
+            icon=ft.Icons.BADGE,
             bgcolor="#EF82A2",
             color="#000000",
             width=180,
@@ -185,6 +191,7 @@ def main(page: ft.Page):
 
         boton_corte_caja = ft.ElevatedButton(
             "Corte de caja",
+            icon=ft.Icons.POINT_OF_SALE_OUTLINED,
             bgcolor="#EF82A2",
             color="#000000",
             width=180,
@@ -206,6 +213,7 @@ def main(page: ft.Page):
 
         boton_reportes = ft.ElevatedButton(
             "Reportes",
+            icon=ft.Icons.BAR_CHART,
             bgcolor="#EF82A2",
             color="#000000",
             width=180,
@@ -234,6 +242,7 @@ def main(page: ft.Page):
 
         def cerrar_sesion(e):
             sesion["id_empleado"] = None
+            sesion["nombre"] = None
             sesion["rol"] = None
             mostrar_login()
 
