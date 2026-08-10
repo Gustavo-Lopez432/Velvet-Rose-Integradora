@@ -88,7 +88,7 @@ def ventas_window(page: ft.Page, actualizar_vista, id_empleado):
 
             venta_dao.delete(id_venta)
             cerrar_dialogo()
-            actualizar_vista(ventas_window(page, actualizar_vista))
+            actualizar_vista(ventas_window(page, actualizar_vista, id_empleado))
 
         dialogo_confirmar.actions = [
             ft.TextButton("Cancelar", on_click=lambda e: cerrar_dialogo()),

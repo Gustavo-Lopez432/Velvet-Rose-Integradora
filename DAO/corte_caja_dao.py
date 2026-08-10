@@ -143,3 +143,83 @@ class CorteCajaDAO:
         conexion.close()
 
         return registros
+
+    #? ================= NUEVO: flujo de abrir / cerrar turno =================
+
+    #? Regresa el corte abierto (hora_cierre IS NULL) del empleado, o None si no tiene
+    def obtener_corte_abierto(self, id_empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT id, fecha, hora_apertura, hora_cierre, monto_inicial, monto_final, id_empleado
+            FROM corte_caja
+            WHERE id_empleado = %s AND hora_cierre IS NULL
+            ORDER BY id DESC
+            LIMIT 1
+        """
+
+        cursor.execute(sql, (id_empleado,))
+        resultado = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        return resultado
+
+    #? Abre un turno nuevo: fecha y hora de apertura las pone la base de datos
+    def abrir_turno(self, id_empleado, monto_inicial):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            INSERT INTO corte_caja
+            (fecha, hora_apertura, hora_cierre, monto_inicial, monto_final, id_empleado)
+            VALUES (CURRENT_DATE, CURRENT_TIME, NULL, %s, NULL, %s)
+        """
+
+        cursor.execute(sql, (monto_inicial, id_empleado))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+    #? Cierra el turno indicado con el efectivo contado (monto_final)
+    def cerrar_turno(self, id_corte, monto_final):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            UPDATE corte_caja
+            SET hora_cierre = CURRENT_TIME,
+                monto_final = %s
+            WHERE id = %s
+        """
+
+        cursor.execute(sql, (monto_final, id_corte))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+    #? Total y número de ventas del día actual para un empleado
+    #? (se usa para comparar lo esperado en caja contra lo contado)
+    def ventas_del_dia_empleado(self, id_empleado):
+        conexion = Conexion.obtener_conexion()
+        cursor = conexion.cursor()
+
+        sql = """
+            SELECT
+                COUNT(*) AS num_ventas,
+                COALESCE(SUM(total), 0) AS total
+            FROM ventas
+            WHERE id_empleado = %s AND DATE(fecha) = CURRENT_DATE
+        """
+
+        cursor.execute(sql, (id_empleado,))
+        resultado = cursor.fetchone()
+
+        cursor.close()
+        conexion.close()
+
+        return resultado
