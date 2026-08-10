@@ -172,6 +172,7 @@ def productos_window(page: ft.Page, actualizar_vista):
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
             "Agregar producto",
+            icon=ft.Icons.ADD_CIRCLE_OUTLINE,
             bgcolor="#EF82A2",
             color="#000000",
             on_click=lambda e: actualizar_vista(

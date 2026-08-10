@@ -8,6 +8,7 @@ def inicio_sesion_window(page: ft.Page, ir_al_dashboard):
     usuario = ft.TextField(
         label="Usuario",
         prefix_icon=ft.Icons.PERSON,
+        color="#000000",
         width=300,
     )
 
@@ -16,6 +17,7 @@ def inicio_sesion_window(page: ft.Page, ir_al_dashboard):
         prefix_icon=ft.Icons.LOCK,
         password=True,
         can_reveal_password=True,
+        color="#000000",
         width=300,
     )
 
