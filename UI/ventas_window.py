@@ -164,6 +164,7 @@ def ventas_window(page: ft.Page, actualizar_vista, id_empleado):
     botonAgregar = ft.Container(
         content=ft.ElevatedButton(
             "Agregar venta",
+            icon=ft.Icons.ADD_CIRCLE_OUTLINE,
             bgcolor="#EF82A2",
             color="#000000",
             on_click=lambda e: actualizar_vista(

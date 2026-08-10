@@ -43,6 +43,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar, id_empleado):
         label="Producto",
         hint_text="Selecciona un producto",
         width=ancho_campo,
+        color="#000000",
         options=[
             ft.dropdown.Option(key=str(p[0]), text=p[2])
             for p in productos_bd
@@ -53,6 +54,7 @@ def agregar_venta_formulario(page: ft.Page, cancelar, id_empleado):
         label="Cantidad",
         hint_text="0",
         width=ancho_campo,
+        color="#000000",
         keyboard_type=ft.KeyboardType.NUMBER
     )
 

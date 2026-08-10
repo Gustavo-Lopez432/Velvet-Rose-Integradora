@@ -32,18 +32,21 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
     nombre = ft.TextField(
         label="Nombre",
         width=ancho_campo,
+        color="#000000",
         value=empleado_actual[1] if empleado_actual else ""
     )
 
     apellidos = ft.TextField(
         label="Apellidos",
         width=ancho_campo,
+        color="#000000",
         value=empleado_actual[2] if empleado_actual else ""
     )
 
     telefono = ft.TextField(
         label="Teléfono",
         width=ancho_campo,
+        color="#000000",
         keyboard_type=ft.KeyboardType.PHONE,
         value=empleado_actual[3] if empleado_actual else ""
     )
@@ -51,6 +54,7 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
     correo = ft.TextField(
         label="Correo electrónico",
         width=ancho_campo,
+        color="#000000",
         keyboard_type=ft.KeyboardType.EMAIL,
         value=empleado_actual[4] if empleado_actual else ""
     )
@@ -58,6 +62,7 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
     usuario = ft.TextField(
         label="Usuario",
         width=ancho_campo,
+        color="#000000",
         value=empleado_actual[5] if empleado_actual else ""
     )
 
@@ -66,12 +71,14 @@ def empleados_window_formulario(page: ft.Page, cancelar, id_empleado=None):
         password=True,
         can_reveal_password=True,
         width=ancho_campo,
+        color="#000000",
         value=empleado_actual[6] if empleado_actual else ""
     )
 
     puesto = ft.Dropdown(
         label="Puesto",
         width=ancho_campo,
+        color="#000000",
         options=[ft.dropdown.Option(p) for p in puestos],
         value=empleado_actual[7] if empleado_actual else None
     )

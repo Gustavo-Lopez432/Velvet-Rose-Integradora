@@ -99,18 +99,9 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
         on_change=limpiar_mensaje,
     )
 
-    max_stock = ft.TextField(
-        label="Máximo en stock (opcional)",
-        hint_text="Default: 50",
-        width=ancho_campo,
-        keyboard_type=ft.KeyboardType.NUMBER,
-        value=str(producto_actual[10]) if producto_actual else "",
-        on_change=limpiar_mensaje,
-    )
-
     min_stock = ft.TextField(
-        label="Mínimo en stock (opcional)",
-        hint_text="Default: 5",
+        label="Alerta de stock bajo (opcional)",
+        hint_text="Default: 5 piezas",
         width=ancho_campo,
         keyboard_type=ft.KeyboardType.NUMBER,
         value=str(producto_actual[11]) if producto_actual else "",
@@ -234,12 +225,9 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
         elif float(precio.value) <= 0:
             errores.append("Precio (debe ser mayor a 0)")
 
-        #? Opcionales: solo se validan si el usuario escribió algo
-        if max_stock.value and not es_entero_valido(max_stock.value):
-            errores.append("Máximo en stock (solo números)")
-
+        #? Opcional: solo se valida si el usuario escribió algo
         if min_stock.value and not es_entero_valido(min_stock.value):
-            errores.append("Mínimo en stock (solo números)")
+            errores.append("Alerta de stock bajo (solo números)")
 
         if errores:
             mostrar_mensaje(f"Faltan campos por completar: {', '.join(errores)}")
@@ -249,7 +237,8 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
             mostrar_mensaje("La cantidad debe ser mayor a 0")
             return
 
-        max_stock_valor = int(max_stock.value) if max_stock.value else 50
+        #? Ya no se pide al usuario; se fija en 0 porque no se usa en ningún lado del sistema
+        max_stock_valor = 0
         min_stock_valor = int(min_stock.value) if min_stock.value else 5
         proveedor_valor = proveedor.value if proveedor.value else None
         imagen_valor = imagen.value if imagen.value else None
@@ -346,7 +335,7 @@ def productos_window_formulario(page: ft.Page, cancelar, id_producto=None):
     )
 
     fila_2 = ft.Row(
-        controls=[cantidad, max_stock, min_stock],
+        controls=[cantidad, min_stock],
         alignment=ft.MainAxisAlignment.CENTER,
         spacing=16,
         wrap=True,

@@ -169,6 +169,7 @@ def corte_caja_window(page: ft.Page, actualizar_vista, id_empleado):
         label="Efectivo contado en caja",
         hint_text="$0.00",
         width=250,
+        color="#000000",
         keyboard_type=ft.KeyboardType.NUMBER,
     )
 
